@@ -1,0 +1,57 @@
+package com.uade.tpo.e_commerce.service;
+
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.uade.tpo.e_commerce.dto.UsuarioRequest;
+import com.uade.tpo.e_commerce.model.Usuario;
+import com.uade.tpo.e_commerce.repository.UsuarioRepository;
+import jakarta.transaction.Transactional;
+
+@Service
+@Transactional
+public class UsuarioService {
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    public List<Usuario> getAllUsuarios() {
+        return usuarioRepository.findAll();
+    }
+
+    public Usuario getUsuarioById(Long id) {
+        return usuarioRepository.findById(id).orElse(null);
+    }
+
+    public Usuario createUsuario(UsuarioRequest request) {
+        // Verificar que el email no esté en uso
+        if (usuarioRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("Ya existe un usuario con el email: " + request.getEmail());
+        }
+
+        Usuario usuario = new Usuario();
+        usuario.setNombre(request.getNombre());
+        usuario.setApellido(request.getApellido());
+        usuario.setEmail(request.getEmail());
+        // En producción deberías hashear la password (BCrypt)
+        usuario.setPassword(request.getPassword());
+
+        return usuarioRepository.save(usuario);
+    }
+
+    public Usuario updateUsuario(Long id, UsuarioRequest request) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + id));
+
+        usuario.setNombre(request.getNombre());
+        usuario.setApellido(request.getApellido());
+        usuario.setEmail(request.getEmail());
+        usuario.setPassword(request.getPassword());
+
+        return usuarioRepository.save(usuario);
+    }
+
+    public void deleteUsuarioById(Long id) {
+        usuarioRepository.deleteById(id);
+    }
+}
