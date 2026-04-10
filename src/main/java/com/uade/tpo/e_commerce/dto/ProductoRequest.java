@@ -1,4 +1,3 @@
-// ===== ProductoRequest.java =====
 package com.uade.tpo.e_commerce.dto;
 
 import lombok.Data;

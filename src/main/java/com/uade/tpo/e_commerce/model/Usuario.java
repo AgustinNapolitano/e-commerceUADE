@@ -2,6 +2,7 @@ package com.uade.tpo.e_commerce.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -24,6 +25,12 @@ public class Usuario {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private LocalDate fechaNacimiento;
+
+    @Column(nullable = false, length = 20)
+    private String sexo;
 
     // Un usuario puede tener muchos pedidos
     @OneToMany(mappedBy = "usuario")

@@ -1,5 +1,6 @@
 package com.uade.tpo.e_commerce;
 
+import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -68,6 +69,8 @@ public class DataLoader implements CommandLineRunner {
         u1.setApellido("Pérez");
         u1.setEmail("juan@mail.com");
         u1.setPassword("1234");
+        u1.setFechaNacimiento(LocalDate.of(1990, 5, 15));
+        u1.setSexo("M");
         usuarioRepository.save(u1);
 
         Usuario u2 = new Usuario();
@@ -75,6 +78,8 @@ public class DataLoader implements CommandLineRunner {
         u2.setApellido("García");
         u2.setEmail("maria@mail.com");
         u2.setPassword("1234");
+        u2.setFechaNacimiento(LocalDate.of(1992, 8, 22));
+        u2.setSexo("F");
         usuarioRepository.save(u2);
 
         System.out.println("✅ Datos de prueba cargados correctamente.");
