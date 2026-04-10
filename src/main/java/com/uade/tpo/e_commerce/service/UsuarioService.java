@@ -2,8 +2,11 @@ package com.uade.tpo.e_commerce.service;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import com.uade.tpo.e_commerce.dto.UsuarioRequest;
+import com.uade.tpo.e_commerce.exception.RecursoNotFoundException;
+import com.uade.tpo.e_commerce.exception.ReglaNegocioException;
 import com.uade.tpo.e_commerce.model.Usuario;
 import com.uade.tpo.e_commerce.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
@@ -26,7 +29,9 @@ public class UsuarioService {
     public Usuario createUsuario(UsuarioRequest request) {
         // Verificar que el email no esté en uso
         if (usuarioRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Ya existe un usuario con el email: " + request.getEmail());
+            throw new ReglaNegocioException(
+                    "Ya existe un usuario con el email: " + request.getEmail(),
+                    HttpStatus.CONFLICT);
         }
 
         Usuario usuario = new Usuario();
@@ -35,18 +40,22 @@ public class UsuarioService {
         usuario.setEmail(request.getEmail());
         // En producción deberías hashear la password (BCrypt)
         usuario.setPassword(request.getPassword());
+        usuario.setFechaNacimiento(request.getFechaNacimiento());
+        usuario.setSexo(request.getSexo());
 
         return usuarioRepository.save(usuario);
     }
 
     public Usuario updateUsuario(Long id, UsuarioRequest request) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + id));
+                .orElseThrow(() -> new RecursoNotFoundException("Usuario no encontrado con id: " + id));
 
         usuario.setNombre(request.getNombre());
         usuario.setApellido(request.getApellido());
         usuario.setEmail(request.getEmail());
         usuario.setPassword(request.getPassword());
+        usuario.setFechaNacimiento(request.getFechaNacimiento());
+        usuario.setSexo(request.getSexo());
 
         return usuarioRepository.save(usuario);
     }

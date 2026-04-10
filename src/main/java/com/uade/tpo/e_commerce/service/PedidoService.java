@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.uade.tpo.e_commerce.dto.PedidoRequest;
+import com.uade.tpo.e_commerce.exception.RecursoNotFoundException;
+import com.uade.tpo.e_commerce.exception.ReglaNegocioException;
 import com.uade.tpo.e_commerce.model.EstadoPedido;
 import com.uade.tpo.e_commerce.model.ItemPedido;
 import com.uade.tpo.e_commerce.model.Pedido;
@@ -45,7 +47,8 @@ public class PedidoService {
     public Pedido createPedido(PedidoRequest request) {
         // Verificar que el usuario existe
         Usuario usuario = usuarioRepository.findById(request.getUsuarioId())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + request.getUsuarioId()));
+                .orElseThrow(() -> new RecursoNotFoundException(
+                        "Usuario no encontrado con id: " + request.getUsuarioId()));
 
         Pedido pedido = new Pedido();
         pedido.setUsuario(usuario);
@@ -55,11 +58,13 @@ public class PedidoService {
 
         for (PedidoRequest.ItemPedidoRequest itemRequest : request.getItems()) {
             Producto producto = productoRepository.findById(itemRequest.getProductoId())
-                    .orElseThrow(() -> new RuntimeException("Producto no encontrado con id: " + itemRequest.getProductoId()));
+                    .orElseThrow(() -> new RecursoNotFoundException(
+                            "Producto no encontrado con id: " + itemRequest.getProductoId()));
 
             // Verificar stock disponible
             if (producto.getStock() < itemRequest.getCantidad()) {
-                throw new RuntimeException("Stock insuficiente para el producto: " + producto.getNombre());
+                throw new ReglaNegocioException(
+                        "Stock insuficiente para el producto: " + producto.getNombre());
             }
 
             // Descontar stock
@@ -86,7 +91,7 @@ public class PedidoService {
     // Cambiar estado del pedido (ej: PENDIENTE -> CONFIRMADO)
     public Pedido updateEstado(Long id, EstadoPedido nuevoEstado) {
         Pedido pedido = pedidoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pedido no encontrado con id: " + id));
+                .orElseThrow(() -> new RecursoNotFoundException("Pedido no encontrado con id: " + id));
         pedido.setEstado(nuevoEstado);
         return pedidoRepository.save(pedido);
     }
