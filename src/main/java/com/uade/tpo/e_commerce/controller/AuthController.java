@@ -20,4 +20,9 @@ public class AuthController {
     public ResponseEntity<Usuario> register(@RequestBody UsuarioRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authenticationService.register(request));
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<Usuario> authenticate(@RequestBody com.uade.tpo.e_commerce.dto.LoginRequest request) {
+        return ResponseEntity.ok(authenticationService.authenticate(request));
+    }
 }

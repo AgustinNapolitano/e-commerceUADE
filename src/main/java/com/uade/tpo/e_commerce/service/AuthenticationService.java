@@ -18,6 +18,9 @@ public class AuthenticationService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     public Usuario register(UsuarioRequest request) {
         Usuario usuario = new Usuario();
         usuario.setNombreUsuario(request.getNombreUsuario());
@@ -32,5 +35,15 @@ public class AuthenticationService {
         usuario.setRole(Role.USER);
 
         return usuarioRepository.save(usuario);
+    }
+
+    public Usuario authenticate(LoginRequest request) {
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(
+                request.getEmail(),
+                request.getPassword()
+            )
+        );
+        return usuarioRepository.findByEmail(request.getEmail()).orElseThrow();
     }
 }
