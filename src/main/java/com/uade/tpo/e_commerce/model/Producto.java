@@ -23,6 +23,8 @@ public class Producto {
     @Column(nullable = false)
     private Integer stock;
 
+    private String imageUrl;
+
     // Muchos productos pertenecen a una categoría
     @ManyToOne
     @JoinColumn(name = "categoria_id")
