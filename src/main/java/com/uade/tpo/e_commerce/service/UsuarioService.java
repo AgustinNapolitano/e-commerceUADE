@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.uade.tpo.e_commerce.dto.UsuarioRequest;
 import com.uade.tpo.e_commerce.exception.RecursoNotFoundException;
@@ -20,6 +21,8 @@ public class UsuarioService implements UserDetailsService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -47,8 +50,7 @@ public class UsuarioService implements UserDetailsService {
         usuario.setNombre(request.getNombre());
         usuario.setApellido(request.getApellido());
         usuario.setEmail(request.getEmail());
-        // En producción deberías hashear la password (BCrypt)
-        usuario.setPassword(request.getPassword());
+        usuario.setPassword(passwordEncoder.encode(request.getPassword()));
         usuario.setFechaNacimiento(request.getFechaNacimiento());
         usuario.setSexo(request.getSexo());
 
@@ -62,7 +64,9 @@ public class UsuarioService implements UserDetailsService {
         usuario.setNombre(request.getNombre());
         usuario.setApellido(request.getApellido());
         usuario.setEmail(request.getEmail());
-        usuario.setPassword(request.getPassword());
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            usuario.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
         usuario.setFechaNacimiento(request.getFechaNacimiento());
         usuario.setSexo(request.getSexo());
 
