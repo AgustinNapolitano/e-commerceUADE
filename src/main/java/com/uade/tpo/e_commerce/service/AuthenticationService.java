@@ -1,9 +1,12 @@
 package com.uade.tpo.e_commerce.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.uade.tpo.e_commerce.dto.LoginRequest;
 import com.uade.tpo.e_commerce.dto.UsuarioRequest;
 import com.uade.tpo.e_commerce.model.Role;
 import com.uade.tpo.e_commerce.model.Usuario;
