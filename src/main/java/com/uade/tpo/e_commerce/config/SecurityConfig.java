@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -28,10 +27,10 @@ public class SecurityConfig {
                 // Endpoints para administradores
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 
-                // Endpoints para usuarios autenticados
-                .requestMatchers(HttpMethod.POST, "/api/productos").hasAnyRole("USER", "ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/productos/**").hasAnyRole("USER", "ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/productos/**").hasAnyRole("USER", "ADMIN")
+                // Endpoints para administradores (Gestión de productos)
+                .requestMatchers(HttpMethod.POST, "/api/productos").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/productos/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/productos/**").hasRole("ADMIN")
                 
                 // Cualquier otra petición requiere autenticación
                 .anyRequest().authenticated()
