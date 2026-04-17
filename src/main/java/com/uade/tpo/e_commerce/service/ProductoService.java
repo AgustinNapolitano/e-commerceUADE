@@ -23,7 +23,7 @@ public class ProductoService {
     private CategoriaRepository categoriaRepository;
 
     public List<ProductoResponse> getAllProductos() {
-        return productoRepository.findAll().stream()
+        return productoRepository.findAllByOrderByNombreAsc().stream()
                 .map(ProductoResponse::fromEntity)
                 .toList();
     }
@@ -40,6 +40,7 @@ public class ProductoService {
         producto.setDescripcion(request.getDescripcion());
         producto.setPrecio(request.getPrecio());
         producto.setStock(request.getStock());
+        producto.setImageUrl(request.getImageUrl());
 
         if (request.getCategoriaId() != null) {
             Categoria categoria = categoriaRepository.findById(request.getCategoriaId())
@@ -59,6 +60,7 @@ public class ProductoService {
         producto.setDescripcion(request.getDescripcion());
         producto.setPrecio(request.getPrecio());
         producto.setStock(request.getStock());
+        producto.setImageUrl(request.getImageUrl());
 
         if (request.getCategoriaId() != null) {
             Categoria categoria = categoriaRepository.findById(request.getCategoriaId())

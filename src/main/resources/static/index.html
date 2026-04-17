@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce UADE | TPO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">UADE Shop</div>
+        <div class="nav-links" id="navActions">
+            <button onclick="toggleCart()">🛒 Carrito (<span id="cartCount">0</span>)</button>
+            <button onclick="showLogin()">Iniciar Sesión</button>
+            <button class="btn-primary" onclick="showRegister()">Registrarse</button>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>Bienvenido a la mejor tecnología</h1>
+        <p>Los mejores productos seleccionados para vos.</p>
+    </section>
+
+    <div class="container">
+        <!-- Sección de Gestión (Solo visible para logueados) -->
+        <div id="adminSection" style="display:none; background: var(--bg-card); padding: 2rem; border-radius: 16px; margin-bottom: 3rem; border: 1px dashed var(--primary)">
+            <h2>Publicar nuevo producto</h2>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top:1rem">
+                <input type="text" id="newProdName" placeholder="Nombre del producto">
+                <input type="number" id="newProdPrice" placeholder="Precio">
+                <input type="number" id="newProdStock" placeholder="Stock inicial">
+                <input type="text" id="newProdImg" placeholder="URL de la imagen">
+                <textarea id="newProdDesc" placeholder="Descripción" style="grid-column: span 2; background:#0f172a; color:white; border-radius:8px; padding:10px"></textarea>
+                <button class="btn-primary" style="grid-column: span 2" onclick="createProduct()">Publicar Producto</button>
+            </div>
+        </div>
+
+        <div class="product-grid" id="productGrid">
+            <!-- Los productos se cargan dinámicamente -->
+        </div>
+    </div>
+
+    <!-- Carrito Lateral -->
+    <div id="cartSidebar" class="modal" style="justify-content: flex-end;">
+        <div class="modal-content" style="height: 100vh; max-width: 400px; border-radius: 0; display: flex; flex-direction: column;">
+            <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2>Tu Carrito</h2>
+                <button onclick="toggleCart()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer">&times;</button>
+            </div>
+            <div id="cartItems" style="flex-grow: 1; overflow-y: auto;">
+                <!-- Items del carrito -->
+            </div>
+            <div style="border-top: 1px solid #334155; padding-top: 1.5rem;">
+                <div style="display:flex; justify-content: space-between; font-size: 1.2rem; font-weight: bold; margin-bottom: 1rem;">
+                    <span>Total:</span>
+                    <span id="cartTotal">$0</span>
+                </div>
+                <button class="btn-primary" style="width: 100%; padding: 1rem;" onclick="checkout()">Finalizar Compra</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Login -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <h2>Iniciar Sesión</h2>
+            <input type="email" id="loginEmail" placeholder="Email (ej: juan@mail.com)">
+            <input type="password" id="loginPass" placeholder="Contraseña">
+            <button class="add-btn" style="width:100%" onclick="login()">Entrar</button>
+            <button onclick="closeModals()" style="background:none; border:none; color:var(--text-muted); width:100%; margin-top:10px; cursor:pointer">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- Modal Registro -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <h2>Crear Cuenta</h2>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <input type="text" id="regUser" placeholder="Nombre de Usuario">
+                <input type="email" id="regEmail" placeholder="Email">
+                <input type="text" id="regNombre" placeholder="Nombre">
+                <input type="text" id="regApellido" placeholder="Apellido">
+                <input type="password" id="regPass" placeholder="Contraseña" style="grid-column: span 2">
+                <div style="grid-column: span 2">
+                    <label style="font-size:0.8rem; color:var(--text-muted)">Fecha de Nacimiento</label>
+                    <input type="date" id="regFecha">
+                </div>
+                <select id="regSexo" style="grid-column: span 2; background:#0f172a; color:white; padding:10px; border-radius:8px; border:1px solid #334155; margin-bottom:1rem">
+                    <option value="M">Masculino</option>
+                    <option value="F">Femenino</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+            <button class="btn-primary" style="width:100%" onclick="register()">Registrarse</button>
+            <button onclick="closeModals()" style="background:none; border:none; color:var(--text-muted); width:100%; margin-top:10px; cursor:pointer">Cancelar</button>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -24,6 +24,9 @@ public class DataLoader implements CommandLineRunner {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
     @Override
 public void run(String... args) throws Exception {
     if (categoriaRepository.count() == 0) {
@@ -66,21 +69,25 @@ public void run(String... args) throws Exception {
 
         // Usuarios
         Usuario u1 = new Usuario();
+        u1.setNombreUsuario("juanp");
         u1.setNombre("Juan");
         u1.setApellido("Pérez");
         u1.setEmail("juan@mail.com");
-        u1.setPassword("1234");
+        u1.setPassword(passwordEncoder.encode("1234"));
         u1.setFechaNacimiento(LocalDate.of(1990, 5, 15));
         u1.setSexo("M");
+        u1.setRole(com.uade.tpo.e_commerce.model.Role.USER);
         usuarioRepository.save(u1);
 
         Usuario u2 = new Usuario();
+        u2.setNombreUsuario("mariag");
         u2.setNombre("María");
         u2.setApellido("García");
         u2.setEmail("maria@mail.com");
-        u2.setPassword("1234");
+        u2.setPassword(passwordEncoder.encode("1234"));
         u2.setFechaNacimiento(LocalDate.of(1992, 8, 22));
         u2.setSexo("F");
+        u2.setRole(com.uade.tpo.e_commerce.model.Role.ADMIN);
         usuarioRepository.save(u2);
 
         System.out.println(" Datos de prueba cargados correctamente.");
