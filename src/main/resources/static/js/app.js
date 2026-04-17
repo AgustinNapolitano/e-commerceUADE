@@ -28,7 +28,7 @@ function renderProducts(products) {
             <div class="product-info">
                 <div style="display:flex; justify-content:space-between">
                     <h3>${p.nombre}</h3>
-                    <button onclick="deleteProduct(${p.id})" style="background:none; border:none; cursor:pointer; color:#ef4444; font-size:1.2rem; display:${currentUser ? 'block' : 'none'}">🗑️</button>
+                    <button onclick="deleteProduct(${p.id})" style="background:none; border:none; cursor:pointer; color:#ef4444; font-size:1.2rem; display:${currentUser && currentUser.role === 'ADMIN' ? 'block' : 'none'}">🗑️</button>
                 </div>
                 <p>${p.descripcion}</p>
                 <div class="price-row">
@@ -110,9 +110,14 @@ async function login() {
         if (response.ok) {
             const users = await response.json();
             const user = users.find(u => u.email === email);
-            currentUser = { ...user, authHeader };
-            updateUI();
-            closeModals();
+            
+            if (user) {
+                console.log("Usuario logueado:", user); // Para ver el rol en la consola (F12)
+                currentUser = { ...user, authHeader };
+                updateUI();
+                closeModals();
+                alert('¡Bienvenido ' + user.nombre + '! (Rol: ' + user.role + ')');
+            }
         } else { alert('Credenciales incorrectas'); }
     } catch (e) { alert('Error de conexión'); }
 }
@@ -121,13 +126,21 @@ function updateUI() {
     const nav = document.getElementById('navActions');
     const adminSec = document.getElementById('adminSection');
     
+    if (!currentUser) return;
+
     nav.innerHTML = `
         <button onclick="toggleCart()">🛒 Carrito (<span id="cartCount">${cart.reduce((a,b)=>a+b.cantidad,0)}</span>)</button>
         <span style="margin-left:1rem">Hola, ${currentUser.nombre}</span>
         <button class="btn-primary" onclick="location.reload()">Cerrar Sesión</button>
     `;
     
-    adminSec.style.display = 'block';
+    // Solo mostrar sección de admin si el usuario es ADMIN
+    if (currentUser.role && currentUser.role.toUpperCase() === 'ADMIN') {
+        adminSec.style.display = 'block';
+    } else {
+        adminSec.style.display = 'none';
+    }
+    
     renderProducts(allProducts); // Refrescar para ver botones de borrar
 }
 
