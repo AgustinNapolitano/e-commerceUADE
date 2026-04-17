@@ -44,6 +44,7 @@ public class Usuario implements UserDetails {
     private Role role;
 
     // Un usuario puede tener muchos pedidos
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @OneToMany(mappedBy = "usuario")
     private List<Pedido> pedidos;
 
