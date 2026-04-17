@@ -25,7 +25,8 @@ public class DataLoader implements CommandLineRunner {
     private UsuarioRepository usuarioRepository;
 
     @Override
-    public void run(String... args) throws Exception {
+public void run(String... args) throws Exception {
+    if (categoriaRepository.count() == 0) {
 
         // Categorías
         Categoria electronica = new Categoria();
@@ -82,6 +83,9 @@ public class DataLoader implements CommandLineRunner {
         u2.setSexo("F");
         usuarioRepository.save(u2);
 
-        System.out.println("✅ Datos de prueba cargados correctamente.");
+        System.out.println(" Datos de prueba cargados correctamente.");
+    } else {
+        System.out.println(" La base de datos ya tiene datos, se omite la carga inicial.");
     }
+}
 }
