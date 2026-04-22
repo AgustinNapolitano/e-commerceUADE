@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8080/api';
+const API_URL = '/api';
 let currentUser = null;
 let cart = [];
 let allProducts = [];
@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function fetchProducts() {
     try {
         const response = await fetch(`${API_URL}/productos`);
+        if (!response.ok) throw new Error('Fallo al cargar');
         allProducts = await response.json();
         renderProducts(allProducts);
     } catch (error) {
@@ -20,6 +21,7 @@ async function fetchProducts() {
 
 function renderProducts(products) {
     const grid = document.getElementById('productGrid');
+    if (!grid) return;
     grid.innerHTML = products.map(p => `
         <div class="product-card">
             <div class="product-img">
@@ -76,6 +78,8 @@ function updateCartUI() {
     const countSpan = document.getElementById('cartCount');
     const totalSpan = document.getElementById('cartTotal');
     
+    if (!container) return;
+
     let total = 0;
     let count = 0;
 
@@ -95,38 +99,54 @@ function updateCartUI() {
 
     if (cart.length === 0) container.innerHTML = '<p style="text-align:center; color:var(--text-muted)">El carrito está vacío</p>';
     
-    countSpan.innerText = count;
-    totalSpan.innerText = `$${total.toLocaleString()}`;
+    if (countSpan) countSpan.innerText = count;
+    if (totalSpan) totalSpan.innerText = `$${total.toLocaleString()}`;
 }
 
-// LÓGICA DE LOGIN / AUTH
+// LÓGICA DE LOGIN / AUTH (JWT)
 async function login() {
     const email = document.getElementById('loginEmail').value;
-    const pass = document.getElementById('loginPass').value;
-    const authHeader = 'Basic ' + btoa(email + ':' + pass);
+    const password = document.getElementById('loginPass').value;
 
     try {
-        const response = await fetch(`${API_URL}/usuarios`, { headers: { 'Authorization': authHeader } });
+        const response = await fetch(`${API_URL}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
         if (response.ok) {
-            const users = await response.json();
-            const user = users.find(u => u.email === email);
+            const data = await response.json();
+            const token = data.token;
             
+            // Obtenemos los datos del usuario logueado (podrías parsear el JWT o llamar a un endpoint /me)
+            // Para simplificar en este TPO, vamos a buscarlo en la lista de usuarios o asumir que es el que ingresó
+            const usersResponse = await fetch(`${API_URL}/usuarios`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const users = await usersResponse.json();
+            const user = users.find(u => u.email === email);
+
             if (user) {
-                console.log("Usuario logueado:", user); // Para ver el rol en la consola (F12)
-                currentUser = { ...user, authHeader };
+                currentUser = { ...user, token };
                 updateUI();
                 closeModals();
-                alert('¡Bienvenido ' + user.nombre + '! (Rol: ' + user.role + ')');
+                alert('¡Bienvenido ' + user.nombre + '!');
             }
-        } else { alert('Credenciales incorrectas'); }
-    } catch (e) { alert('Error de conexión'); }
+        } else {
+            alert('Credenciales incorrectas');
+        }
+    } catch (e) {
+        console.error(e);
+        alert('Error de conexión');
+    }
 }
 
 function updateUI() {
     const nav = document.getElementById('navActions');
     const adminSec = document.getElementById('adminSection');
     
-    if (!currentUser) return;
+    if (!currentUser || !nav) return;
 
     nav.innerHTML = `
         <button onclick="toggleCart()">🛒 Carrito (<span id="cartCount">${cart.reduce((a,b)=>a+b.cantidad,0)}</span>)</button>
@@ -134,17 +154,13 @@ function updateUI() {
         <button class="btn-primary" onclick="location.reload()">Cerrar Sesión</button>
     `;
     
-    // Solo mostrar sección de admin si el usuario es ADMIN
-    if (currentUser.role && currentUser.role.toUpperCase() === 'ADMIN') {
-        adminSec.style.display = 'block';
-    } else {
-        adminSec.style.display = 'none';
+    if (adminSec) {
+        adminSec.style.display = (currentUser.role && currentUser.role.toUpperCase() === 'ADMIN') ? 'block' : 'none';
     }
     
-    renderProducts(allProducts); // Refrescar para ver botones de borrar
+    renderProducts(allProducts);
 }
 
-// LÓGICA DE COMPRA (CHECKOUT)
 async function checkout() {
     if (!currentUser) { alert('Debes iniciar sesión para comprar'); return showLogin(); }
     if (cart.length === 0) return alert('El carrito está vacío');
@@ -159,25 +175,23 @@ async function checkout() {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
-                'Authorization': currentUser.authHeader 
+                'Authorization': `Bearer ${currentUser.token}` 
             },
             body: JSON.stringify(pedidoRequest)
         });
 
         if (response.ok) {
-            alert('¡Compra realizada con éxito! El stock ha sido actualizado.');
+            alert('¡Compra realizada con éxito!');
             cart = [];
             updateCartUI();
             toggleCart();
-            fetchProducts(); // Recargar productos para ver el nuevo stock
+            fetchProducts();
         } else {
-            const error = await response.json();
-            alert('Error en la compra: ' + (error.message || 'Stock insuficiente'));
+            alert('Error en la compra');
         }
     } catch (e) { alert('Error al procesar el pedido'); }
 }
 
-// GESTIÓN DE PRODUCTOS
 async function createProduct() {
     const product = {
         nombre: document.getElementById('newProdName').value,
@@ -185,7 +199,7 @@ async function createProduct() {
         stock: parseInt(document.getElementById('newProdStock').value),
         descripcion: document.getElementById('newProdDesc').value,
         imageUrl: document.getElementById('newProdImg').value,
-        categoriaId: 1 // Por simplicidad usamos la categoría 1
+        categoriaId: 1
     };
 
     try {
@@ -193,24 +207,24 @@ async function createProduct() {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
-                'Authorization': currentUser.authHeader 
+                'Authorization': `Bearer ${currentUser.token}` 
             },
             body: JSON.stringify(product)
         });
 
         if (response.ok) {
-            alert('Producto publicado correctamente');
+            alert('Producto creado');
             fetchProducts();
         }
     } catch (e) { alert('Error al crear producto'); }
 }
 
 async function deleteProduct(id) {
-    if (!confirm('¿Seguro que quieres eliminar este producto?')) return;
+    if (!confirm('¿Seguro?')) return;
     try {
         const response = await fetch(`${API_URL}/productos/${id}`, {
             method: 'DELETE',
-            headers: { 'Authorization': currentUser.authHeader }
+            headers: { 'Authorization': `Bearer ${currentUser.token}` }
         });
         if (response.ok) fetchProducts();
     } catch (e) { alert('Error al eliminar'); }
@@ -239,13 +253,12 @@ async function register() {
         });
 
         if (response.ok) {
-            alert('¡Cuenta creada con éxito! Ahora puedes iniciar sesión.');
+            alert('¡Cuenta creada!');
             closeModals();
             showLogin();
         } else {
-            alert('Error al registrar usuario. Verifica los datos.');
+            alert('Error al registrar');
         }
-    } catch (e) {
-        alert('Error de conexión');
-    }
+    } catch (e) { alert('Error de conexión'); }
 }
+
