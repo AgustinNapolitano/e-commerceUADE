@@ -2,11 +2,33 @@ const API_URL = '/api';
 let currentUser = null;
 let cart = [];
 let allProducts = [];
+let allCategories = [];
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    await fetchCategories();
     fetchProducts();
     updateCartUI();
 });
+
+async function fetchCategories() {
+    try {
+        const response = await fetch(`${API_URL}/categorias`);
+        if (response.ok) {
+            allCategories = await response.json();
+            populateCategorySelects();
+        }
+    } catch (error) {
+        console.error('Error cargando categorías:', error);
+    }
+}
+
+function populateCategorySelects() {
+    const options = allCategories.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
+    const newProdCat = document.getElementById('newProdCategory');
+    const editProdCat = document.getElementById('editProdCategory');
+    if (newProdCat) newProdCat.innerHTML = options || '<option value="1">Categoría General</option>';
+    if (editProdCat) editProdCat.innerHTML = options || '<option value="1">Categoría General</option>';
+}
 
 async function fetchProducts() {
     try {
@@ -202,7 +224,7 @@ async function createProduct() {
         stock: parseInt(document.getElementById('newProdStock').value),
         descripcion: document.getElementById('newProdDesc').value,
         imageUrl: document.getElementById('newProdImg').value,
-        categoriaId: 1
+        categoriaId: parseInt(document.getElementById('newProdCategory').value) || 1
     };
 
     try {
@@ -243,6 +265,7 @@ function editProductPrompt(id) {
     document.getElementById('editProdStock').value = product.stock;
     document.getElementById('editProdImg').value = product.imageUrl || '';
     document.getElementById('editProdDesc').value = product.descripcion || '';
+    document.getElementById('editProdCategory').value = product.categoriaId || 1;
     
     document.getElementById('editProductModal').style.display = 'flex';
 }
@@ -256,7 +279,7 @@ async function updateProduct() {
         stock: parseInt(document.getElementById('editProdStock').value),
         descripcion: document.getElementById('editProdDesc').value,
         imageUrl: document.getElementById('editProdImg').value,
-        categoriaId: oldProduct ? (oldProduct.categoriaId || 1) : 1
+        categoriaId: parseInt(document.getElementById('editProdCategory').value) || 1
     };
 
     try {
