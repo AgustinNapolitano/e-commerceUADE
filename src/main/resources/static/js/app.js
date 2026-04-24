@@ -30,7 +30,10 @@ function renderProducts(products) {
             <div class="product-info">
                 <div style="display:flex; justify-content:space-between">
                     <h3>${p.nombre}</h3>
-                    <button onclick="deleteProduct(${p.id})" style="background:none; border:none; cursor:pointer; color:#ef4444; font-size:1.2rem; display:${currentUser && currentUser.role === 'ADMIN' ? 'block' : 'none'}">🗑️</button>
+                    <div style="display:${currentUser && currentUser.role === 'ADMIN' ? 'flex' : 'none'}; gap: 0.5rem;">
+                        <button onclick="editProductPrompt(${p.id})" style="background:none; border:none; cursor:pointer; color:#3b82f6; font-size:1.2rem;" title="Editar">✏️</button>
+                        <button onclick="deleteProduct(${p.id})" style="background:none; border:none; cursor:pointer; color:#ef4444; font-size:1.2rem;" title="Eliminar">🗑️</button>
+                    </div>
                 </div>
                 <p>${p.descripcion}</p>
                 <div class="price-row">
@@ -228,6 +231,52 @@ async function deleteProduct(id) {
         });
         if (response.ok) fetchProducts();
     } catch (e) { alert('Error al eliminar'); }
+}
+
+function editProductPrompt(id) {
+    const product = allProducts.find(p => p.id === id);
+    if (!product) return;
+    
+    document.getElementById('editProdId').value = product.id;
+    document.getElementById('editProdName').value = product.nombre;
+    document.getElementById('editProdPrice').value = product.precio;
+    document.getElementById('editProdStock').value = product.stock;
+    document.getElementById('editProdImg').value = product.imageUrl || '';
+    document.getElementById('editProdDesc').value = product.descripcion || '';
+    
+    document.getElementById('editProductModal').style.display = 'flex';
+}
+
+async function updateProduct() {
+    const id = document.getElementById('editProdId').value;
+    const oldProduct = allProducts.find(p => p.id == id);
+    const product = {
+        nombre: document.getElementById('editProdName').value,
+        precio: parseFloat(document.getElementById('editProdPrice').value),
+        stock: parseInt(document.getElementById('editProdStock').value),
+        descripcion: document.getElementById('editProdDesc').value,
+        imageUrl: document.getElementById('editProdImg').value,
+        categoriaId: oldProduct ? (oldProduct.categoriaId || 1) : 1
+    };
+
+    try {
+        const response = await fetch(`${API_URL}/productos/${id}`, {
+            method: 'PUT',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${currentUser.token}` 
+            },
+            body: JSON.stringify(product)
+        });
+
+        if (response.ok) {
+            alert('Producto actualizado');
+            closeModals();
+            fetchProducts();
+        } else {
+            alert('Error al actualizar producto');
+        }
+    } catch (e) { alert('Error de conexión'); }
 }
 
 function showLogin() { document.getElementById('loginModal').style.display = 'flex'; }
