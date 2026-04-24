@@ -1,14 +1,13 @@
 package com.uade.tpo.e_commerce.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.uade.tpo.e_commerce.dto.PedidoRequest;
-import com.uade.tpo.e_commerce.exception.RecursoNotFoundException;
-import com.uade.tpo.e_commerce.exception.ReglaNegocioException;
-import com.uade.tpo.e_commerce.model.EstadoPedido;
+import com.uade.tpo.e_commerce.dto.PedidoResponse;
 import com.uade.tpo.e_commerce.model.ItemPedido;
 import com.uade.tpo.e_commerce.model.Pedido;
 import com.uade.tpo.e_commerce.model.Producto;
@@ -16,6 +15,7 @@ import com.uade.tpo.e_commerce.model.Usuario;
 import com.uade.tpo.e_commerce.repository.PedidoRepository;
 import com.uade.tpo.e_commerce.repository.ProductoRepository;
 import com.uade.tpo.e_commerce.repository.UsuarioRepository;
+
 import jakarta.transaction.Transactional;
 
 @Service
@@ -31,72 +31,66 @@ public class PedidoService {
     @Autowired
     private ProductoRepository productoRepository;
 
-    public List<Pedido> getAllPedidos() {
-        return pedidoRepository.findAll();
-    }
+    public PedidoResponse createPedido(PedidoRequest request) {
 
-    public Pedido getPedidoById(Long id) {
-        return pedidoRepository.findById(id).orElse(null);
-    }
-
-    // Buscar todos los pedidos de un usuario específico
-    public List<Pedido> getPedidosByUsuario(Long usuarioId) {
-        return pedidoRepository.findByUsuarioId(usuarioId);
-    }
-
-    public Pedido createPedido(PedidoRequest request) {
-        // Verificar que el usuario existe
         Usuario usuario = usuarioRepository.findById(request.getUsuarioId())
-                .orElseThrow(() -> new RecursoNotFoundException(
-                        "Usuario no encontrado con id: " + request.getUsuarioId()));
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         Pedido pedido = new Pedido();
         pedido.setUsuario(usuario);
 
-        List<ItemPedido> items = new ArrayList<>();
-        double total = 0.0;
+        List<ItemPedido> items = request.getItems().stream().map(itemReq -> {
 
-        for (PedidoRequest.ItemPedidoRequest itemRequest : request.getItems()) {
-            Producto producto = productoRepository.findById(itemRequest.getProductoId())
-                    .orElseThrow(() -> new RecursoNotFoundException(
-                            "Producto no encontrado con id: " + itemRequest.getProductoId()));
+            Producto producto = productoRepository.findById(itemReq.getProductoId())
+                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-            // Verificar stock disponible
-            if (producto.getStock() < itemRequest.getCantidad()) {
-                throw new ReglaNegocioException(
-                        "Stock insuficiente para el producto: " + producto.getNombre());
-            }
-
-            // Descontar stock
-            producto.setStock(producto.getStock() - itemRequest.getCantidad());
-            productoRepository.save(producto);
-
-            // Crear item del pedido
             ItemPedido item = new ItemPedido();
             item.setPedido(pedido);
             item.setProducto(producto);
-            item.setCantidad(itemRequest.getCantidad());
-            item.setPrecioUnitario(producto.getPrecio()); // guarda el precio actual
+            item.setCantidad(itemReq.getCantidad());
+            item.setPrecioUnitario(producto.getPrecio());
 
-            total += producto.getPrecio() * itemRequest.getCantidad();
-            items.add(item);
-        }
+            return item;
+
+        }).collect(Collectors.toList());
 
         pedido.setItems(items);
+
+        double total = items.stream()
+                .mapToDouble(i -> i.getPrecioUnitario() * i.getCantidad())
+                .sum();
+
         pedido.setTotal(total);
 
-        return pedidoRepository.save(pedido);
+        Pedido nuevoPedido = pedidoRepository.save(pedido);
+
+        return mapToResponse(nuevoPedido);
     }
 
-    // Cambiar estado del pedido (ej: PENDIENTE -> CONFIRMADO)
-    public Pedido updateEstado(Long id, EstadoPedido nuevoEstado) {
-        Pedido pedido = pedidoRepository.findById(id)
-                .orElseThrow(() -> new RecursoNotFoundException("Pedido no encontrado con id: " + id));
-        pedido.setEstado(nuevoEstado);
-        return pedidoRepository.save(pedido);
+    public List<PedidoResponse> getAllPedidos() {
+        return pedidoRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
-    public void deletePedidoById(Long id) {
-        pedidoRepository.deleteById(id);
+    private PedidoResponse mapToResponse(Pedido pedido) {
+        return new PedidoResponse(
+                pedido.getId(),
+                pedido.getUsuario().getId(),
+                pedido.getUsuario().getEmail(),
+                pedido.getEstado(),
+                pedido.getFecha(),
+                pedido.getTotal(),
+                pedido.getItems().stream()
+                        .map(item -> new PedidoResponse.ItemPedidoResponse(
+                                item.getProducto().getId(),
+                                item.getProducto().getNombre(),
+                                item.getCantidad(),
+                                item.getPrecioUnitario(),
+                                item.getPrecioUnitario() * item.getCantidad()
+                        ))
+                        .collect(Collectors.toList())
+        );
     }
 }
