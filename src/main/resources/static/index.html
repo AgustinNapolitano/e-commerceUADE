@@ -33,7 +33,10 @@
                 <input type="text" id="newProdName" placeholder="Nombre del producto">
                 <input type="number" id="newProdPrice" placeholder="Precio">
                 <input type="number" id="newProdStock" placeholder="Stock inicial">
-                <input type="text" id="newProdImg" placeholder="URL de la imagen">
+                <select id="newProdCategory" style="background:#0f172a; color:white; padding:10px; border-radius:8px; border:1px solid #334155;">
+                    <option value="1">Categoría General</option>
+                </select>
+                <input type="text" id="newProdImg" placeholder="URL de la imagen" style="grid-column: span 2">
                 <textarea id="newProdDesc" placeholder="Descripción" style="grid-column: span 2; background:#0f172a; color:white; border-radius:8px; padding:10px"></textarea>
                 <button class="btn-primary" style="grid-column: span 2" onclick="createProduct()">Publicar Producto</button>
             </div>
@@ -109,7 +112,10 @@
                 <input type="text" id="editProdName" placeholder="Nombre del producto">
                 <input type="number" id="editProdPrice" placeholder="Precio">
                 <input type="number" id="editProdStock" placeholder="Stock">
-                <input type="text" id="editProdImg" placeholder="URL de la imagen">
+                <select id="editProdCategory" style="background:#0f172a; color:white; padding:10px; border-radius:8px; border:1px solid #334155;">
+                    <option value="1">Categoría General</option>
+                </select>
+                <input type="text" id="editProdImg" placeholder="URL de la imagen" style="grid-column: span 2">
                 <textarea id="editProdDesc" placeholder="Descripción" style="grid-column: span 2; background:#0f172a; color:white; border-radius:8px; padding:10px"></textarea>
             </div>
             <button class="btn-primary" style="width:100%; margin-top: 1rem;" onclick="updateProduct()">Guardar Cambios</button>
