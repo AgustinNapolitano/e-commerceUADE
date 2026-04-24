@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 public class ProductoResponse {
     private Long id;
     private String nombre;
+    private String imageUrl;
     private String descripcion;
     private Double precio;
     private Integer stock;
@@ -26,6 +27,7 @@ public class ProductoResponse {
         return new ProductoResponse(
                 p.getId(),
                 p.getNombre(),
+                p.getImageUrl(),
                 p.getDescripcion(),
                 p.getPrecio(),
                 p.getStock(),
