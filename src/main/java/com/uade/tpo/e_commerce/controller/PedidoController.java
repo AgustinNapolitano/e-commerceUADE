@@ -28,4 +28,9 @@ public class PedidoController {
     public ResponseEntity<List<PedidoResponse>> getAllPedidos() {
         return ResponseEntity.ok(pedidoService.getAllPedidos());
     }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<PedidoResponse> getPedidoById(@PathVariable Long id) {
+        return ResponseEntity.ok(pedidoService.getPedidoById(id));
+    }
 }

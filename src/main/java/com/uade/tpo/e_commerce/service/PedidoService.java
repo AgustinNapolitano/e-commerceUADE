@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.uade.tpo.e_commerce.dto.PedidoRequest;
 import com.uade.tpo.e_commerce.dto.PedidoResponse;
+import com.uade.tpo.e_commerce.exception.RecursoNotFoundException;
 import com.uade.tpo.e_commerce.model.ItemPedido;
 import com.uade.tpo.e_commerce.model.Pedido;
 import com.uade.tpo.e_commerce.model.Producto;
@@ -72,6 +73,13 @@ public class PedidoService {
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+    }
+
+    public PedidoResponse getPedidoById(Long id) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNotFoundException("No hay pedido con esa ID"));
+
+        return mapToResponse(pedido);
     }
 
     private PedidoResponse mapToResponse(Pedido pedido) {
