@@ -130,10 +130,12 @@ function updateCartUI() {
 
 // LÓGICA DE LOGIN / AUTH (JWT)
 async function login() {
+    // Tomamos lo que el usuario escribió en las cajas de texto de email y contraseña
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPass').value;
 
     try {
+        // Hacemos una petición POST al backend para iniciar sesión enviando el email y la clave
         const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -141,21 +143,26 @@ async function login() {
         });
 
         if (response.ok) {
+            // Si el backend dice OK (200), extraemos el JSON de la respuesta
             const data = await response.json();
+            // Guardamos el token JWT (la "llave" mágica que prueba quiénes somos)
             const token = data.token;
             
-            // Obtenemos los datos del usuario logueado (podrías parsear el JWT o llamar a un endpoint /me)
-            // Para simplificar en este TPO, vamos a buscarlo en la lista de usuarios o asumir que es el que ingresó
+            // Hacemos OTRA petición para traernos la lista de usuarios. 
+            // IMPORTANTE: Aquí mandamos el token en la cabecera 'Authorization' para demostrar que tenemos permiso
             const usersResponse = await fetch(`${API_URL}/usuarios`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const users = await usersResponse.json();
+            // Buscamos en la lista al usuario que tenga nuestro mismo email
             const user = users.find(u => u.email === email);
 
             if (user) {
+                // Guardamos en la variable global "currentUser" los datos del usuario MÁS su token
                 currentUser = { ...user, token };
+                // Actualizamos la pantalla (ocultamos botones o mostramos el panel de admin)
                 updateUI();
-                closeModals();
+                closeModals(); // Cerramos la ventanita del login
                 alert('¡Bienvenido ' + user.nombre + '!');
             }
         } else {
@@ -167,22 +174,28 @@ async function login() {
     }
 }
 
+// Función que cambia la interfaz web dependiendo de quién inició sesión
 function updateUI() {
     const nav = document.getElementById('navActions');
     const adminSec = document.getElementById('adminSection');
     
     if (!currentUser || !nav) return;
 
+    // Si hay alguien logueado, le mostramos su nombre, el botón del carrito y el de cerrar sesión
     nav.innerHTML = `
         <button onclick="toggleCart()">🛒 Carrito (<span id="cartCount">${cart.reduce((a,b)=>a+b.cantidad,0)}</span>)</button>
         <span style="margin-left:1rem">Hola, ${currentUser.nombre}</span>
         <button class="btn-primary" onclick="location.reload()">Cerrar Sesión</button>
     `;
     
+    // LA MAGIA DE LOS ROLES EN EL FRONTEND:
+    // Si el usuario actual tiene el rol 'ADMIN', le mostramos (display: 'block') el panel de Crear Producto.
+    // Si es un simple 'USER', lo dejamos oculto (display: 'none').
     if (adminSec) {
         adminSec.style.display = (currentUser.role && currentUser.role.toUpperCase() === 'ADMIN') ? 'block' : 'none';
     }
     
+    // Volvemos a dibujar los productos para que aparezcan los botones de "Borrar/Editar" si es Admin
     renderProducts(allProducts);
 }
 
