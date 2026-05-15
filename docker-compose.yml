@@ -13,7 +13,7 @@ services:
       retries: 10
 
   app:
-    build: .
+    build: ./backend
     container_name: ecommerce-app
     ports:
       - "${APP_PORT}:8080"
@@ -26,4 +26,3 @@ services:
     depends_on:
       db:
         condition: service_healthy
-
