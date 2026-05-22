@@ -14,7 +14,7 @@ const ProductList = () => {
 
       try {
 
-        const response = await fetch('http://localhost:8081/api/productos');
+        const response = await fetch('http://localhost:8080/api/productos');
 
         if (!response.ok) {
           throw new Error('Error al cargar los productos');
