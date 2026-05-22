@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import './ProductList.css';
 
 const ProductList = () => {
+  const location = useLocation();
   const [products, setProducts] = useState([]);
   const [textoBusqueda, setTextoBusqueda] = useState("");
-  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("Todas");
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(
+    location.state?.category || "Todas"
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
