@@ -43,15 +43,15 @@ public class SecurityConfig {
                 .requestMatchers("/", "/index.html", "/*.html", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 
-                // Lectura de productos y categorías es pública
+                // Lectura de productos, categorías y pedidos es pública
                 .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/categorias/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/pedidos/**").permitAll()
                 
                 // Acciones de administración requieren rol ADMIN (Tarea Integrante 4)
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/productos").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/productos/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/api/pedidos/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/productos/**").hasRole("ADMIN")
                 
                 // Cualquier otra petición debe estar autenticada
@@ -78,7 +78,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         // Permitir el origen del Frontend (Vite)
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:5174"));
         // Métodos HTTP permitidos
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         // Headers permitidos (necesario para enviar el Token de Authorization)
