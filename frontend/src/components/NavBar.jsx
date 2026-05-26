@@ -40,6 +40,12 @@ function Navbar() {
               Pedidos
             </Link>
           </li>
+
+          <li>
+            <Link to="/admin" className={isActive('/admin') ? 'nav-link active' : 'nav-link'}>
+              Panel Admin
+            </Link>
+          </li>
         </ul>
       </div>
     </nav>

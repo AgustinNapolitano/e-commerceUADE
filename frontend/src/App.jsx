@@ -3,6 +3,7 @@ import CategoryList from './components/CategoryList'
 import NavBar from './components/NavBar'
 import ProductDetail from './components/ProductDetail'
 import Pedido from './components/Pedido'
+import Home from './components/Home'
 import {Routes, Route} from 'react-router-dom'
 
 
@@ -13,7 +14,7 @@ return (
       <NavBar />
 
       <Routes>
-        <Route path="/" element={<h1>Inicio</h1>} />
+        <Route path="/" element={<Home />} />
         <Route path="/productos" element={<ProductList />} />
         <Route path="/productos/:id" element={<ProductDetail />} />
         <Route path="/categorias" element={<CategoryList />} />
