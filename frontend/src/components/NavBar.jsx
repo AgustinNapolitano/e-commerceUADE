@@ -35,11 +35,13 @@ function Navbar() {
             </Link>
           </li>
 
-          <li>
-            <Link to="/pedidos" className={isActive('/pedidos') ? 'nav-link active' : 'nav-link'}>
-              Pedidos
-            </Link>
-          </li>
+          {user && (
+            <li>
+              <Link to="/pedidos" className={isActive('/pedidos') ? 'nav-link active' : 'nav-link'}>
+                Pedidos
+              </Link>
+            </li>
+          )}
 
           {user && user.role === 'ADMIN' && (
             <li>
@@ -49,11 +51,13 @@ function Navbar() {
             </li>
           )}
 
-          <li>
-            <Link to="/registro" className={isActive('/registro') ? 'nav-link active' : 'nav-link'}>
-              Registro
-            </Link>
-          </li>
+          {!user && (
+            <li>
+              <Link to="/registro" className={isActive('/registro') ? 'nav-link active' : 'nav-link'}>
+                Registro
+              </Link>
+            </li>
+          )}
 
           {user ? (
             <li className="nav-user-section">
