@@ -289,35 +289,90 @@
   border-color: #fca5a5;
 }
 
-/* Denied Access view */
-.denied-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 60vh;
-  padding: 2rem;
+/* Media Queries para Responsividad Superior */
+
+@media (max-width: 768px) {
+  .admin-container {
+    margin: 1rem auto;
+    padding: 0 1rem;
+    gap: 1.5rem;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding-bottom: 1.25rem;
+  }
+
+  .admin-header button {
+    width: 100%;
+    text-align: center;
+    padding: 0.6rem;
+  }
+
+  .admin-card {
+    padding: 1.5rem;
+  }
+
+  /* Compactar tabla en tablet y mobile */
+  .admin-table th, 
+  .admin-table td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  /* Ocultar columna ID en mobile para ahorrar espacio */
+  .col-id,
+  .admin-table th:first-child {
+    display: none; 
+  }
+
+  /* Ocultar descripción de catálogo secundaria para no saturar */
+  .prod-desc-text {
+    display: none; 
+  }
+
+  .col-img {
+    width: 60px;
+  }
+
+  .table-img {
+    width: 40px;
+    height: 40px;
+  }
 }
 
-.denied-card {
-  background: white;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 3rem 2rem;
-  text-align: center;
-  box-shadow: var(--shadow-md);
-  max-width: 450px;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
+@media (max-width: 576px) {
+  .form-row {
+    flex-direction: column;
+    gap: 1.25rem;
+  }
 
-.denied-card h2 {
-  font-weight: 800;
-  margin: 0;
-}
+  .form-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
 
-.denied-card p {
-  color: var(--text-muted);
-  margin: 0;
-  line-height: 1.5;
+  .btn-save, 
+  .btn-cancel {
+    width: 100%;
+    padding: 0.75rem;
+  }
+
+  .col-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .btn-action-edit, 
+  .btn-action-delete {
+    width: 100%;
+    margin-right: 0;
+    text-align: center;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.8rem;
+  }
 }
