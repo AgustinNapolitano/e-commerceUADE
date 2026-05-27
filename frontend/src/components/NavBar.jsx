@@ -49,6 +49,12 @@ function Navbar() {
             </li>
           )}
 
+          <li>
+            <Link to="/registro" className={isActive('/registro') ? 'nav-link active' : 'nav-link'}>
+              Registro
+            </Link>
+          </li>
+
           {user ? (
             <li className="nav-user-section">
               <div className="nav-user-badge">

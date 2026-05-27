@@ -6,6 +6,7 @@ import Pedido from './components/Pedido'
 import Home from './components/Home'
 import Login from './components/Login'
 import AdminPanel from './components/AdminPanel'
+import Register from './components/Register'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 
@@ -14,12 +15,10 @@ const ProtectedAdminRoute = ({ children }) => {
   const { user } = useAuth();
 
   if (!user) {
-    // Redirigir al login si no ha iniciado sesión
     return <Navigate to="/login" replace />;
   }
 
   if (user.role !== 'ADMIN') {
-    // Redirigir al inicio si no es administrador
     return <Navigate to="/" replace />;
   }
 
@@ -27,7 +26,6 @@ const ProtectedAdminRoute = ({ children }) => {
 };
 
 function App() {
-
   return (
     <>
       <NavBar />
@@ -39,6 +37,7 @@ function App() {
         <Route path="/categorias" element={<CategoryList />} />
         <Route path="/pedidos" element={<Pedido />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/registro" element={<Register />} />
 
         <Route
           path="/admin"
@@ -48,7 +47,6 @@ function App() {
             </ProtectedAdminRoute>
           }
         />
-
       </Routes>
     </>
   )
