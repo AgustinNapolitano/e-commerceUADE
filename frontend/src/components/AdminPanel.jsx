@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import './AdminPanel.css';
 
 const AdminPanel = () => {
+  const { logout } = useAuth();
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   // Estado para el formulario CRUD
   const [formData, setFormData] = useState({
     nombre: '',
@@ -18,14 +20,9 @@ const AdminPanel = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
 
-  // Verificación de Rol (Protección de vista)
-  const userRole = localStorage.getItem('role') || 'USER'; // Simulación si no hay Auth completa
-
   useEffect(() => {
-    if (userRole === 'ADMIN') {
-      fetchData();
-    }
-  }, [userRole]);
+    fetchData();
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -38,10 +35,10 @@ const AdminPanel = () => {
 
       const resProd = await fetch('http://localhost:8080/api/productos', { headers });
       const resCat = await fetch('http://localhost:8080/api/categorias', { headers });
-      
+
       if (resProd.ok) setProductos(await resProd.json());
       if (resCat.ok) setCategorias(await resCat.json());
-      
+
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -90,8 +87,8 @@ const AdminPanel = () => {
         ...(token ? { 'Authorization': `Bearer ${token}` } : {})
       };
 
-      const url = isEditing 
-        ? `http://localhost:8080/api/productos/${editId}` 
+      const url = isEditing
+        ? `http://localhost:8080/api/productos/${editId}`
         : 'http://localhost:8080/api/productos';
       const method = isEditing ? 'PUT' : 'POST';
 
@@ -133,26 +130,6 @@ const AdminPanel = () => {
     }
   };
 
-  if (userRole !== 'ADMIN') {
-    return (
-      <div className="denied-container">
-        <div className="denied-card">
-          <h2 className="text-danger">Acceso Denegado</h2>
-          <p>Solo los administradores pueden ver esta sección.</p>
-          <button 
-            className="btn btn-primary"
-            onClick={() => {
-              localStorage.setItem('role', 'ADMIN');
-              window.location.reload();
-            }}
-          >
-            Simular Login como ADMIN (Para probar)
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="admin-container">
       <div className="admin-header">
@@ -160,15 +137,6 @@ const AdminPanel = () => {
           <h2>Panel de Administración</h2>
           <p className="text-muted">Gestioná el catálogo de artículos, categorías y stock en tiempo real.</p>
         </div>
-        <button 
-          className="btn btn-outline-danger btn-sm"
-          onClick={() => {
-            localStorage.setItem('role', 'USER');
-            window.location.reload();
-          }}
-        >
-          Cerrar Sesión Admin
-        </button>
       </div>
 
       <div className="admin-grid">
@@ -178,22 +146,22 @@ const AdminPanel = () => {
           <form onSubmit={handleSubmit} className="admin-form">
             <div className="form-group">
               <label>Nombre del Producto *</label>
-              <input 
-                type="text" 
-                name="nombre" 
-                placeholder="Ej. Teclado Mecánico RGB" 
-                value={formData.nombre} 
-                onChange={handleChange} 
-                required 
+              <input
+                type="text"
+                name="nombre"
+                placeholder="Ej. Teclado Mecánico RGB"
+                value={formData.nombre}
+                onChange={handleChange}
+                required
               />
             </div>
-            
+
             <div className="form-group">
               <label>Descripción</label>
-              <textarea 
-                name="descripcion" 
-                placeholder="Detalles sobre el producto..." 
-                value={formData.descripcion} 
+              <textarea
+                name="descripcion"
+                placeholder="Detalles sobre el producto..."
+                value={formData.descripcion}
                 onChange={handleChange}
               ></textarea>
             </div>
@@ -201,25 +169,25 @@ const AdminPanel = () => {
             <div className="form-row">
               <div className="form-group col-half">
                 <label>Precio *</label>
-                <input 
-                  type="number" 
-                  name="precio" 
-                  placeholder="0.00" 
-                  step="0.01" 
-                  value={formData.precio} 
-                  onChange={handleChange} 
-                  required 
+                <input
+                  type="number"
+                  name="precio"
+                  placeholder="0.00"
+                  step="0.01"
+                  value={formData.precio}
+                  onChange={handleChange}
+                  required
                 />
               </div>
               <div className="form-group col-half">
                 <label>Stock disponible *</label>
-                <input 
-                  type="number" 
-                  name="stock" 
-                  placeholder="0" 
-                  value={formData.stock} 
-                  onChange={handleChange} 
-                  required 
+                <input
+                  type="number"
+                  name="stock"
+                  placeholder="0"
+                  value={formData.stock}
+                  onChange={handleChange}
+                  required
                 />
               </div>
             </div>
@@ -234,12 +202,12 @@ const AdminPanel = () => {
 
             <div className="form-group">
               <label>URL de Imagen</label>
-              <input 
-                type="text" 
-                name="imageUrl" 
-                placeholder="https://ejemplo.com/imagen.jpg" 
-                value={formData.imageUrl} 
-                onChange={handleChange} 
+              <input
+                type="text"
+                name="imageUrl"
+                placeholder="https://ejemplo.com/imagen.jpg"
+                value={formData.imageUrl}
+                onChange={handleChange}
               />
             </div>
 

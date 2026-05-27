@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
 import { ShoppingBag, Sliders, ArrowRight, CreditCard, Truck, RotateCcw, Headphones, Sparkles, Package, ListFilter, CheckCircle } from 'lucide-react';
 import './Home.css';
 
 const Home = () => {
+  const { user } = useAuth();
   return (
     <div className="home-container">
       {/* Background gradient elements */}
@@ -17,7 +19,7 @@ const Home = () => {
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-content">
-          <motion.span 
+          <motion.span
             className="hero-badge"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -25,8 +27,8 @@ const Home = () => {
           >
             <Sparkles size={14} className="badge-icon" /> Experiencia de Compra Inteligente
           </motion.span>
-          
-          <motion.h1 
+
+          <motion.h1
             className="hero-title"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -35,8 +37,8 @@ const Home = () => {
             Tu Destino Digital de Compras
             <span>UADE E-COMMERCE</span>
           </motion.h1>
-          
-          <motion.p 
+
+          <motion.p
             className="hero-subtitle"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -44,8 +46,8 @@ const Home = () => {
           >
             Encuentra la mejor selección de productos con un diseño elegante, navegación ágil y transacciones seguras. Explora nuestro catálogo y lleva tus compras online al siguiente nivel.
           </motion.p>
-          
-          <motion.div 
+
+          <motion.div
             className="hero-actions"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -54,12 +56,25 @@ const Home = () => {
             <Link to="/productos" className="btn-primary-custom">
               Ver Catálogo <ShoppingBag size={18} />
             </Link>
-            <Link to="/admin" className="btn-secondary-custom">
-              Panel Admin <Sliders size={18} />
-            </Link>
           </motion.div>
         </div>
       </section>
+
+      {/* Promotion banner */}
+      {user && user.role === 'ADMIN' && (
+        <section className="promo-banner">
+          <div className="promo-content">
+            <div className="promo-text">
+              <span className="promo-tag">Panel Administrativo</span>
+              <h2>¿Deseas gestionar el catálogo de productos?</h2>
+              <p>Accede al panel de administración para agregar, actualizar stock, editar especificaciones o eliminar productos en tiempo real.</p>
+            </div>
+            <Link to="/admin" className="promo-btn">
+              Administrar Catálogo <ArrowRight size={18} />
+            </Link>
+          </div>
+        </section>
+      )}
 
       {/* Benefits Grid Section */}
       <section className="benefits-section">
@@ -157,19 +172,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Promotion banner */}
-      <section className="promo-banner">
-        <div className="promo-content">
-          <div className="promo-text">
-            <span className="promo-tag">Panel Administrativo</span>
-            <h2>¿Deseas gestionar el catálogo de productos?</h2>
-            <p>Accede al panel de administración para agregar, actualizar stock, editar especificaciones o eliminar productos en tiempo real.</p>
-          </div>
-          <Link to="/admin" className="promo-btn">
-            Administrar Catálogo <ArrowRight size={18} />
-          </Link>
-        </div>
-      </section>
+
     </div>
   );
 };

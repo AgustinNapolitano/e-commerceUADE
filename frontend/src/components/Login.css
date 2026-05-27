@@ -1,0 +1,217 @@
+.login-page-wrapper {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--background-color);
+}
+
+/* Fondo con brillo radial sutil */
+.radial-background-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(79, 70, 229, 0.08) 0%, rgba(6, 182, 212, 0.03) 50%, transparent 100%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.login-card-container {
+  width: 100%;
+  max-width: 450px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-lg);
+  box-shadow: 
+    0 10px 30px -5px rgba(0, 0, 0, 0.03),
+    0 20px 40px -10px rgba(79, 70, 229, 0.05),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.8);
+  padding: 2.5rem;
+  z-index: 2;
+  position: relative;
+}
+
+.login-card-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.brand-logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.logo-emoji {
+  font-size: 1.8rem;
+}
+
+.logo-text {
+  font-size: 1.6rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
+}
+
+.card-subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Estructuras de Formularios */
+.auth-form-container {
+  position: relative;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.input-group-custom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.input-group-custom label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 1rem;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.input-with-icon input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.7rem;
+  border: 1px solid #cbd5e1;
+  background-color: var(--surface-color);
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  color: var(--text-main);
+  outline: none;
+}
+
+.input-with-icon input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-toggle-btn:hover {
+  color: var(--primary-color);
+}
+
+/* Boton submit */
+.auth-submit-btn {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+  margin-top: 0.5rem;
+}
+
+.auth-submit-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3);
+}
+
+.auth-submit-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.auth-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-arrow {
+  transition: transform 0.25s ease;
+}
+
+.auth-submit-btn:hover .btn-arrow {
+  transform: translateX(3px);
+}
+
+/* Feedback Alerts */
+.feedback-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  border: 1px solid transparent;
+}
+
+.alert-danger-custom {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border-color: #fee2e2;
+}
+
+.alert-success-custom {
+  background-color: #ecfdf5;
+  color: #047857;
+  border-color: #d1fae5;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .login-card-container {
+    padding: 1.75rem;
+  }
+}
