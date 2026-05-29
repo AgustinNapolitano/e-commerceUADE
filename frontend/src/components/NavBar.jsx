@@ -1,13 +1,15 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { User, LogOut, LogIn, ShoppingCart } from 'lucide-react';
+import { useFavorite } from '../context/FavoriteContext';
+import { User, LogOut, LogIn, ShoppingCart, Heart } from 'lucide-react';
 import './NavBar.css';
 
 function Navbar() {
   const location = useLocation();
   const { user, logout } = useAuth();
   const { cartCount } = useCart();
+  const { favoriteItems } = useFavorite();
 
   const isActive = (path) => location.pathname === path;
 
@@ -45,6 +47,20 @@ function Navbar() {
                 {cartCount > 0 && (
                   <span className="badge bg-primary rounded-pill ms-1" style={{ fontSize: '0.75rem', padding: '0.25em 0.6em' }}>
                     {cartCount}
+                  </span>
+                )}
+              </Link>
+            </li>
+          )}
+
+          {user && user.role === 'USER' && (
+            <li>
+              <Link to="/favoritos" className={isActive('/favoritos') ? 'nav-link active' : 'nav-link'} style={{ display: 'flex', alignItems: 'center' }}>
+                <Heart size={16} className="me-1" />
+                Favoritos
+                {favoriteItems.length > 0 && (
+                  <span className="badge bg-danger rounded-pill ms-1" style={{ fontSize: '0.75rem', padding: '0.25em 0.6em' }}>
+                    {favoriteItems.length}
                   </span>
                 )}
               </Link>

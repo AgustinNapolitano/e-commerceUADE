@@ -6,6 +6,7 @@ import {createRoot} from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
+import { FavoriteProvider } from './context/FavoriteContext'
 
 // Importamos Bootstrap (CSS y JS)
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -17,7 +18,9 @@ createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <AuthProvider>
         <CartProvider>
-          <App />
+          <FavoriteProvider>
+            <App />
+          </FavoriteProvider>
         </CartProvider>
       </AuthProvider>
     </BrowserRouter>
