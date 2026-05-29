@@ -51,13 +51,6 @@ function Navbar() {
             </li>
           )}
 
-          {!user && (
-            <li>
-              <Link to="/registro" className={isActive('/registro') ? 'nav-link active' : 'nav-link'}>
-                Registro
-              </Link>
-            </li>
-          )}
 
           {user ? (
             <li className="nav-user-section">
