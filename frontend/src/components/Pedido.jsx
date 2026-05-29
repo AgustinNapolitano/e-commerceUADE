@@ -16,8 +16,10 @@ import {
   AlertTriangle 
 } from 'lucide-react';
 import './Pedido.css';
+import { useAuth } from '../context/AuthContext';
 
 const Pedido = () => {
+  const { user } = useAuth();
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -126,15 +128,20 @@ const Pedido = () => {
     }
   };
 
+  // Filter by user role so standard users only see their own orders
+  const userPedidos = user?.role === 'ADMIN'
+    ? pedidos
+    : pedidos.filter(p => p.emailUsuario === user?.email);
+
   // Calculations for KPI Cards
-  const totalPedidos = pedidos.length;
-  const totalFacturado = pedidos
+  const totalPedidos = userPedidos.length;
+  const totalFacturado = userPedidos
     .filter(p => p.estado !== 'CANCELADO')
     .reduce((sum, p) => sum + (p.total || 0), 0);
-  const pedidosActivos = pedidos.filter(p => p.estado !== 'CANCELADO' && p.estado !== 'ENTREGADO').length;
+  const pedidosActivos = userPedidos.filter(p => p.estado !== 'CANCELADO' && p.estado !== 'ENTREGADO').length;
 
   // Filtered orders
-  const filteredPedidos = pedidos.filter(pedido => {
+  const filteredPedidos = userPedidos.filter(pedido => {
     const matchesSearch = 
       (pedido.emailUsuario && pedido.emailUsuario.toLowerCase().includes(searchTerm.toLowerCase())) ||
       pedido.id.toString().includes(searchTerm);
@@ -177,37 +184,39 @@ const Pedido = () => {
       </div>
 
       {/* Analytics KPI Cards */}
-      <div className="orders-kpi-grid">
-        <div className="kpi-card shadow-sm">
-          <div className="kpi-icon-wrapper kpi-blue">
-            <ShoppingBag size={24} />
+      {user?.role === 'ADMIN' && (
+        <div className="orders-kpi-grid">
+          <div className="kpi-card shadow-sm">
+            <div className="kpi-icon-wrapper kpi-blue">
+              <ShoppingBag size={24} />
+            </div>
+            <div className="kpi-content">
+              <span className="kpi-title">Pedidos Totales</span>
+              <h3 className="kpi-value">{totalPedidos}</h3>
+            </div>
           </div>
-          <div className="kpi-content">
-            <span className="kpi-title">Pedidos Totales</span>
-            <h3 className="kpi-value">{totalPedidos}</h3>
-          </div>
-        </div>
 
-        <div className="kpi-card shadow-sm">
-          <div className="kpi-icon-wrapper kpi-green">
-            <DollarSign size={24} />
+          <div className="kpi-card shadow-sm">
+            <div className="kpi-icon-wrapper kpi-green">
+              <DollarSign size={24} />
+            </div>
+            <div className="kpi-content">
+              <span className="kpi-title">Total Facturado</span>
+              <h3 className="kpi-value">${totalFacturado.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
+            </div>
           </div>
-          <div className="kpi-content">
-            <span className="kpi-title">Total Facturado</span>
-            <h3 className="kpi-value">${totalFacturado.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
-          </div>
-        </div>
 
-        <div className="kpi-card shadow-sm">
-          <div className="kpi-icon-wrapper kpi-purple">
-            <Clock size={24} />
-          </div>
-          <div className="kpi-content">
-            <span className="kpi-title">Pedidos en Curso</span>
-            <h3 className="kpi-value">{pedidosActivos}</h3>
+          <div className="kpi-card shadow-sm">
+            <div className="kpi-icon-wrapper kpi-purple">
+              <Clock size={24} />
+            </div>
+            <div className="kpi-content">
+              <span className="kpi-title">Pedidos en Curso</span>
+              <h3 className="kpi-value">{pedidosActivos}</h3>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Filters and Search controls */}
       <div className="orders-controls-card shadow-sm">
@@ -216,7 +225,7 @@ const Pedido = () => {
           <input
             type="text"
             className="search-input"
-            placeholder="Buscar por ID de pedido o email del cliente..."
+            placeholder={user?.role === 'ADMIN' ? "Buscar por ID de pedido o email del cliente..." : "Buscar por ID de pedido..."}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />

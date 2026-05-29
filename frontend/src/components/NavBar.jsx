@@ -1,11 +1,13 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { User, LogOut, LogIn } from 'lucide-react';
+import { useCart } from '../context/CartContext';
+import { User, LogOut, LogIn, ShoppingCart } from 'lucide-react';
 import './NavBar.css';
 
 function Navbar() {
   const location = useLocation();
   const { user, logout } = useAuth();
+  const { cartCount } = useCart();
 
   const isActive = (path) => location.pathname === path;
 
@@ -34,6 +36,20 @@ function Navbar() {
               Categorías
             </Link>
           </li>
+
+          {user && user.role === 'USER' && (
+            <li>
+              <Link to="/carrito" className={isActive('/carrito') ? 'nav-link active' : 'nav-link'} style={{ display: 'flex', alignItems: 'center' }}>
+                <ShoppingCart size={16} className="me-1" />
+                Carrito
+                {cartCount > 0 && (
+                  <span className="badge bg-primary rounded-pill ms-1" style={{ fontSize: '0.75rem', padding: '0.25em 0.6em' }}>
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+            </li>
+          )}
 
           {user && (
             <li>

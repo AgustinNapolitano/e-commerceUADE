@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
+import { AlertTriangle, CheckCircle2 } from 'lucide-react';
 import './ProductDetail.css';
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const { user } = useAuth();
+  const { addToCart } = useCart();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [successMsg, setSuccessMsg] = useState('');
 
   useEffect(() => {
     const fetchProductDetail = async () => {
@@ -32,6 +38,18 @@ const ProductDetail = () => {
     }
   }, [id]);
 
+  const handleAddToCart = () => {
+    if (user?.role === 'ADMIN') {
+      return; // Bloqueo de seguridad explícito
+    }
+    addToCart(product, user?.role);
+    const productName = product?.nombre || product?.title || product?.name || 'Producto';
+    setSuccessMsg(`¡${productName} agregado al carrito!`);
+    setTimeout(() => {
+      setSuccessMsg('');
+    }, 3000);
+  };
+
   if (loading) return <div className="product-detail-center">Cargando detalle del producto...</div>;
   if (error) return <div className="product-detail-center">Error: {error}</div>;
   if (!product) return <div className="product-detail-center">Producto no encontrado.</div>;
@@ -41,6 +59,8 @@ const ProductDetail = () => {
   const price = product.precio ?? product.price ?? 0;
   const img = product.imagen ?? product.image ?? '';
   const categoria = product.categoriaNombre ?? product.category ?? '';
+
+  const isAdmin = user?.role === 'ADMIN';
 
   return (
     <div className="product-detail-container">
@@ -55,7 +75,29 @@ const ProductDetail = () => {
           <h1 className="product-detail-title">{name}</h1>
           <p className="product-detail-price">${Number(price).toLocaleString('es-AR')}</p>
           <p className="product-detail-description">{desc}</p>
-          <button className="product-detail-buy-button">Agregar al Carrito</button>
+          
+          {user && user.role === 'USER' && (
+            <button 
+              className="product-detail-buy-button"
+              onClick={handleAddToCart}
+            >
+              Agregar al Carrito
+            </button>
+          )}
+
+          {isAdmin && (
+            <div className="admin-warning-alert">
+              <AlertTriangle size={18} />
+              <span>Los administradores no pueden realizar compras</span>
+            </div>
+          )}
+
+          {successMsg && (
+            <div className="success-alert">
+              <CheckCircle2 size={18} />
+              <span>{successMsg}</span>
+            </div>
+          )}
         </div>
       </div>
     </div>
