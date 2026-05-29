@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { 
   ShoppingBag, 
   Calendar, 
@@ -18,6 +19,7 @@ import {
 import './Pedido.css';
 
 const Pedido = () => {
+  const { user } = useAuth();
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,11 +27,29 @@ const Pedido = () => {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [expandedPedidoId, setExpandedPedidoId] = useState(null);
 
+  // Decodificar el correo del usuario del token JWT
+  let userEmail = null;
+  if (user && user.token) {
+    try {
+      const parts = user.token.split('.');
+      if (parts.length === 3) {
+        const payload = JSON.parse(atob(parts[1]));
+        userEmail = payload.sub;
+      }
+    } catch (e) {
+      console.error("Error al decodificar token en Pedido:", e);
+    }
+  }
+
   const fetchPedidos = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:8080/api/pedidos');
+      const headers = {};
+      if (user && user.token) {
+        headers['Authorization'] = `Bearer ${user.token}`;
+      }
+      const response = await fetch('http://localhost:8080/api/pedidos', { headers });
       if (!response.ok) {
         throw new Error('Error al cargar la lista de pedidos');
       }
@@ -135,6 +155,13 @@ const Pedido = () => {
 
   // Filtered orders
   const filteredPedidos = pedidos.filter(pedido => {
+    // Si el usuario es tipo Cliente (USER), filtrar solo sus propios pedidos por email
+    if (user && user.role === 'USER' && userEmail) {
+      if (pedido.emailUsuario !== userEmail) {
+        return false;
+      }
+    }
+
     const matchesSearch = 
       (pedido.emailUsuario && pedido.emailUsuario.toLowerCase().includes(searchTerm.toLowerCase())) ||
       pedido.id.toString().includes(searchTerm);
@@ -176,38 +203,40 @@ const Pedido = () => {
         <p className="subtitulo-seccion">Visualiza y gestiona las compras realizadas en la plataforma de forma dinámica</p>
       </div>
 
-      {/* Analytics KPI Cards */}
-      <div className="orders-kpi-grid">
-        <div className="kpi-card shadow-sm">
-          <div className="kpi-icon-wrapper kpi-blue">
-            <ShoppingBag size={24} />
+      {/* Analytics KPI Cards - Visibles solo para administradores */}
+      {user && user.role === 'ADMIN' && (
+        <div className="orders-kpi-grid">
+          <div className="kpi-card shadow-sm">
+            <div className="kpi-icon-wrapper kpi-blue">
+              <ShoppingBag size={24} />
+            </div>
+            <div className="kpi-content">
+              <span className="kpi-title">Pedidos Totales</span>
+              <h3 className="kpi-value">{totalPedidos}</h3>
+            </div>
           </div>
-          <div className="kpi-content">
-            <span className="kpi-title">Pedidos Totales</span>
-            <h3 className="kpi-value">{totalPedidos}</h3>
-          </div>
-        </div>
 
-        <div className="kpi-card shadow-sm">
-          <div className="kpi-icon-wrapper kpi-green">
-            <DollarSign size={24} />
+          <div className="kpi-card shadow-sm">
+            <div className="kpi-icon-wrapper kpi-green">
+              <DollarSign size={24} />
+            </div>
+            <div className="kpi-content">
+              <span className="kpi-title">Total Facturado</span>
+              <h3 className="kpi-value">${totalFacturado.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
+            </div>
           </div>
-          <div className="kpi-content">
-            <span className="kpi-title">Total Facturado</span>
-            <h3 className="kpi-value">${totalFacturado.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
-          </div>
-        </div>
 
-        <div className="kpi-card shadow-sm">
-          <div className="kpi-icon-wrapper kpi-purple">
-            <Clock size={24} />
-          </div>
-          <div className="kpi-content">
-            <span className="kpi-title">Pedidos en Curso</span>
-            <h3 className="kpi-value">{pedidosActivos}</h3>
+          <div className="kpi-card shadow-sm">
+            <div className="kpi-icon-wrapper kpi-purple">
+              <Clock size={24} />
+            </div>
+            <div className="kpi-content">
+              <span className="kpi-title">Pedidos en Curso</span>
+              <h3 className="kpi-value">{pedidosActivos}</h3>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Filters and Search controls */}
       <div className="orders-controls-card shadow-sm">
@@ -216,7 +245,7 @@ const Pedido = () => {
           <input
             type="text"
             className="search-input"
-            placeholder="Buscar por ID de pedido o email del cliente..."
+            placeholder={user && user.role === 'ADMIN' ? "Buscar por ID de pedido o email del cliente..." : "Buscar por ID de pedido..."}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />

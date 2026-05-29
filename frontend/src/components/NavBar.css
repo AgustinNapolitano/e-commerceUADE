@@ -160,3 +160,36 @@
     padding: 0.35rem 0.65rem;
   }
 }
+
+.nav-link-cart {
+  display: flex !important;
+  align-items: center;
+  gap: 0.4rem;
+  position: relative;
+}
+
+.nav-cart-icon {
+  margin-top: -1px;
+  color: var(--text-muted);
+}
+
+.nav-link.active .nav-cart-icon {
+  color: var(--primary-color) !important;
+}
+
+.nav-cart-badge {
+  background-color: var(--danger-color, #ef4444);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 1.5px solid white;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
+  line-height: 1;
+}

@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import './ProductList.css';
 
 const ProductList = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, addToCart } = useAuth();
+  
+  const [addedMap, setAddedMap] = useState({});
   const [products, setProducts] = useState([]);
   const [textoBusqueda, setTextoBusqueda] = useState("");
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(
@@ -175,9 +180,42 @@ const ProductList = () => {
                   {desc}
                 </p>
 
-                <span className="product-detail">
-                  Ver detalle →
-                </span>
+                <div className="product-card-footer">
+                  <span className="product-detail">
+                    Ver detalle →
+                  </span>
+                  
+                  {(!user || user.role === 'USER') && (
+                    user ? (
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          addToCart(product);
+                          setAddedMap(prev => ({ ...prev, [id]: true }));
+                          setTimeout(() => {
+                            setAddedMap(prev => ({ ...prev, [id]: false }));
+                          }, 1200);
+                        }}
+                        className={`product-card-add-btn ${addedMap[id] ? 'added' : ''}`}
+                        disabled={addedMap[id]}
+                      >
+                        {addedMap[id] ? '¡Agregado! ✓' : 'Agregar al Carrito'}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          navigate('/login');
+                        }}
+                        className="product-card-add-btn login-to-buy-btn"
+                      >
+                        Iniciá sesión para comprar
+                      </button>
+                    )
+                  )}
+                </div>
 
               </div>
             </Link>

@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import './ProductDetail.css';
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user, addToCart } = useAuth();
+  
+  const [added, setAdded] = useState(false);
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -55,7 +60,29 @@ const ProductDetail = () => {
           <h1 className="product-detail-title">{name}</h1>
           <p className="product-detail-price">${Number(price).toLocaleString('es-AR')}</p>
           <p className="product-detail-description">{desc}</p>
-          <button className="product-detail-buy-button">Agregar al Carrito</button>
+          
+          {(!user || user.role === 'USER') && (
+            user ? (
+              <button
+                onClick={() => {
+                  addToCart(product);
+                  setAdded(true);
+                  setTimeout(() => setAdded(false), 1200);
+                }}
+                className={`product-detail-buy-button ${added ? 'added' : ''}`}
+                disabled={added}
+              >
+                {added ? '¡Agregado al Carrito! ✓' : 'Agregar al Carrito'}
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate('/login')}
+                className="product-detail-buy-button login-to-buy-detail-btn"
+              >
+                Iniciá sesión para comprar
+              </button>
+            )
+          )}
         </div>
       </div>
     </div>

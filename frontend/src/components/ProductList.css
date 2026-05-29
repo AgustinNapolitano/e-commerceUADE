@@ -88,4 +88,54 @@
   margin-top: 0.5rem;
   color: #0a58ca;
   font-weight: 500;
+  display: inline-block;
+}
+
+.product-card-footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.product-card-add-btn {
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+  color: white;
+  border: none;
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.15);
+}
+
+.product-card-add-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(79, 70, 229, 0.25);
+  background: linear-gradient(135deg, #4338ca 0%, #3730a3 100%);
+}
+
+.product-card-add-btn:active {
+  transform: translateY(0);
+}
+
+.product-card-add-btn.added {
+  background: #10b981 !important;
+  color: white !important;
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.15) !important;
+  cursor: default;
+}
+
+.login-to-buy-btn {
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+  box-shadow: 0 4px 10px rgba(100, 116, 139, 0.15);
+}
+
+.login-to-buy-btn:hover {
+  background: linear-gradient(135deg, #475569 0%, #334155 100%);
+  box-shadow: 0 6px 14px rgba(100, 116, 139, 0.25);
 }
