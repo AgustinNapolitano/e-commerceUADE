@@ -7,6 +7,7 @@ import Home from './components/Home'
 import Auth from './components/Auth'
 import AdminPanel from './components/AdminPanel'
 import Carrito from './components/Carrito'
+import Favorite from './components/Favorite'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 
@@ -37,6 +38,7 @@ function App() {
         <Route path="/categorias" element={<CategoryList />} />
         <Route path="/pedidos" element={<Pedido />} />
         <Route path="/carrito" element={<Carrito />} />
+        <Route path="/favoritos" element={<Favorite />} />
         <Route path="/login" element={<Auth initialMode="login" />} />
         <Route path="/registro" element={<Auth initialMode="register" />} />
 

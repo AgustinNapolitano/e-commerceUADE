@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { useFavorite } from '../context/FavoriteContext';
+import { Heart } from 'lucide-react';
 import './ProductList.css';
 
 const ProductList = () => {
   const location = useLocation();
+  const { user } = useAuth();
+  const { favoriteItems, addToFavorite, removeFromFavorite } = useFavorite();
   const [products, setProducts] = useState([]);
   const [textoBusqueda, setTextoBusqueda] = useState("");
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(
@@ -178,6 +183,28 @@ const ProductList = () => {
                 <span className="product-detail">
                   Ver detalle →
                 </span>
+
+                {user && user.role === 'USER' && (() => {
+                  const isFav = favoriteItems.some(f => (f.id ?? f._id ?? f.codigo) === id);
+                  return (
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        isFav ? removeFromFavorite(id) : addToFavorite(product);
+                      }}
+                      title={isFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '4px',
+                        color: isFav ? '#e53e3e' : '#999',
+                      }}
+                    >
+                      <Heart size={20} fill={isFav ? '#e53e3e' : 'none'} />
+                    </button>
+                  );
+                })()}
 
               </div>
             </Link>
