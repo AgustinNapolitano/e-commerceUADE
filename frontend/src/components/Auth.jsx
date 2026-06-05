@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { login as loginAction } from '../store/authSlice';
+import { login as loginAction } from '../store/slices/authSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Mail, 

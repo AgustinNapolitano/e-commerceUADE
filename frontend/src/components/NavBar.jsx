@@ -1,7 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
-import {useSelector} from 'react-redux';
 import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '../store/authSlice';
+import { logout } from '../store/slices/authSlice';
 import { useFavorite } from '../context/FavoriteContext';
 import { User, LogOut, LogIn, ShoppingCart, Heart } from 'lucide-react';
 import './NavBar.css';

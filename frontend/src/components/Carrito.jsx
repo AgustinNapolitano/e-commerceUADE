@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeFromCart, updateQuantity, clearCart } from '../store/slices/cartSlice';
-import { useSelector } from 'react-redux';
 import { 
   Trash2, 
   Plus, 
