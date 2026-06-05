@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../store/slices/cartSlice';
 import { AlertTriangle, CheckCircle2 } from 'lucide-react';
 import './ProductDetail.css';
+import { useSelector } from 'react-redux';
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const user = useSelector((state) => state.auth.user);
-  const { addToCart } = useCart();
+  const dispatch = useDispatch();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [successMsg, setSuccessMsg] = useState('');
+  const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     const fetchProductDetail = async () => {
@@ -42,7 +44,7 @@ const ProductDetail = () => {
     if (user?.role === 'ADMIN') {
       return; // Bloqueo de seguridad explícito
     }
-    addToCart(product, user?.role);
+    dispatch(addToCart(product));
     const productName = product?.nombre || product?.title || product?.name || 'Producto';
     setSuccessMsg(`¡${productName} agregado al carrito!`);
     setTimeout(() => {
