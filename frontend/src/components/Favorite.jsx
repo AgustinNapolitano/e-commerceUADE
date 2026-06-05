@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useFavorite } from '../context/FavoriteContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { removeFromFavorite } from '../store/slices/favoritesSlice';
 import { Heart, Trash2 } from 'lucide-react';
 
 const Favorite = () => {
-  const { favoriteItems, removeFromFavorite } = useFavorite();
+  const favoriteItems = useSelector((state) => state.favorites.favoriteItems);
+  const dispatch = useDispatch();
 
   if (favoriteItems.length === 0) {
     return (
@@ -61,7 +63,7 @@ const Favorite = () => {
                 Ver detalle
               </Link>
               <button
-                onClick={() => removeFromFavorite(item.id)}
+                onClick={() => dispatch(removeFromFavorite(item.id))}
                 title="Quitar de favoritos"
                 style={{ background: 'transparent', border: '1px solid #e53e3e', borderRadius: '8px', padding: '6px 10px', cursor: 'pointer', color: '#e53e3e' }}
               >

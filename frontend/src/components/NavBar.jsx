@@ -1,7 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
-import { useFavorite } from '../context/FavoriteContext';
 import { User, LogOut, LogIn, ShoppingCart, Heart } from 'lucide-react';
 import './NavBar.css';
 
@@ -11,7 +10,7 @@ function Navbar() {
   const cartCount = cartItems.reduce((total, item) => total + item.cantidad, 0);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
-  const { favoriteItems } = useFavorite();
+  const favoriteItems = useSelector((state) => state.favorites.favoriteItems);
 
   const isActive = (path) => location.pathname === path;
 
