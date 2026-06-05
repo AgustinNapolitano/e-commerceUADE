@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { useFavorite } from '../context/FavoriteContext';
+import { useSelector, useDispatch } from 'react-redux';
 import { Heart } from 'lucide-react';
 import './ProductList.css';
-import { useDispatch } from 'react-redux';
 import { addToCart } from '../store/slices/cartSlice';
+import { addToFavorite, removeFromFavorite } from '../store/slices/favoritesSlice';
 import { useNavigate } from 'react-router-dom';
 
 const ProductList = () => {
   const location = useLocation();
   const user = useSelector((state) => state.auth.user);
-  const { favoriteItems, addToFavorite, removeFromFavorite } = useFavorite();
+  const favoriteItems = useSelector((state) => state.favorites.favoriteItems);
   const [products, setProducts] = useState([]);
   const [textoBusqueda, setTextoBusqueda] = useState("");
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(
@@ -219,8 +218,8 @@ const ProductList = () => {
                       <button
                         onClick={() => {
                           isFav
-                            ? removeFromFavorite(id)
-                            : addToFavorite(product);
+                            ? dispatch(removeFromFavorite(id))
+                            : dispatch(addToFavorite(product));
                         }}
                         title={isFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}
                         style={{
