@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useSelector } from 'react-redux';
 import { useCart } from '../context/CartContext';
 import { 
   Trash2, 
@@ -16,7 +16,7 @@ import {
 import './Carrito.css';
 
 const Carrito = () => {
-  const { user } = useAuth();
+  const user = useSelector((state) => state.auth.user);
   const { 
     cartItems, 
     removeFromCart, 

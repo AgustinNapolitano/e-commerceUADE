@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../store/authSlice';
 import { useCart } from '../context/CartContext';
 import { useFavorite } from '../context/FavoriteContext';
 import { User, LogOut, LogIn, ShoppingCart, Heart } from 'lucide-react';
@@ -7,7 +8,8 @@ import './NavBar.css';
 
 function Navbar() {
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
   const { cartCount } = useCart();
   const { favoriteItems } = useFavorite();
 
@@ -90,7 +92,7 @@ function Navbar() {
                 <User size={16} className="nav-user-icon" />
                 <span className="nav-user-greeting">¡Hola, {user.nombre}!</span>
               </div>
-              <button onClick={logout} className="nav-logout-btn" title="Cerrar Sesión">
+              <button onClick={() => dispatch(logout())} className="nav-logout-btn" title="Cerrar Sesión">
                 <LogOut size={16} />
                 <span>Salir</span>
               </button>

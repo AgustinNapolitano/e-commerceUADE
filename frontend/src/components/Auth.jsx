@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useDispatch } from 'react-redux';
+import { login as loginAction } from '../store/authSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Mail, 
@@ -18,7 +19,7 @@ import {
 import './Auth.css';
 
 const Auth = ({ initialMode = 'login' }) => {
-  const { login } = useAuth();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -89,8 +90,8 @@ const Auth = ({ initialMode = 'login' }) => {
         throw new Error(data.message || 'Credenciales inválidas. Por favor, verifica tus datos.');
       }
 
-      // Guardar sesión en contexto
-      login(data.token, data.role, data.nombre);
+      // Guardar sesión en redux store
+      dispatch(loginAction({ token: data.token, role: data.role, nombre: data.nombre }));
       
       setSuccessMsg('¡Sesión iniciada con éxito! Redirigiendo...');
       
@@ -125,8 +126,8 @@ const Auth = ({ initialMode = 'login' }) => {
         throw new Error(data.message || 'Error al registrarse. Por favor, verifica los campos.');
       }
 
-      // Login automático usando el AuthContext tras registro exitoso
-      login(data.token, data.role, data.nombre);
+      // Login automático usando redux store tras registro exitoso
+      dispatch(loginAction({ token: data.token, role: data.role, nombre: data.nombre }));
       
       setSuccessMsg('¡Cuenta creada con éxito! Iniciando sesión...');
       
