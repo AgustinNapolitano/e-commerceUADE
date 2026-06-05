@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useAuth } from '../context/AuthContext';
+import { useSelector } from 'react-redux';
 import { ShoppingBag, Sliders, ArrowRight, CreditCard, Truck, RotateCcw, Headphones, Sparkles, Package, ListFilter, CheckCircle } from 'lucide-react';
 import './Home.css';
 
 const Home = () => {
-  const { user } = useAuth();
+  const user = useSelector((state) => state.auth.user);
   return (
     <div className="home-container">
       {/* Background gradient elements */}

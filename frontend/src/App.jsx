@@ -9,11 +9,11 @@ import AdminPanel from './components/AdminPanel'
 import Carrito from './components/Carrito'
 import Favorite from './components/Favorite'
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { useAuth } from './context/AuthContext'
+import { useSelector } from 'react-redux'
 
 // Componente para proteger la ruta de administrador
 const ProtectedAdminRoute = ({ children }) => {
-  const { user } = useAuth();
+  const user = useSelector((state) => state.auth.user);
 
   if (!user) {
     return <Navigate to="/login" replace />;

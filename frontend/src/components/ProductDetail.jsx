@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useSelector } from 'react-redux';
 import { useCart } from '../context/CartContext';
 import { AlertTriangle, CheckCircle2 } from 'lucide-react';
 import './ProductDetail.css';
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const { user } = useAuth();
+  const user = useSelector((state) => state.auth.user);
   const { addToCart } = useCart();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);

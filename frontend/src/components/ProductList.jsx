@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useSelector } from 'react-redux';
 import { useFavorite } from '../context/FavoriteContext';
 import { Heart } from 'lucide-react';
 import './ProductList.css';
 
 const ProductList = () => {
   const location = useLocation();
-  const { user } = useAuth();
+  const user = useSelector((state) => state.auth.user);
   const { favoriteItems, addToFavorite, removeFromFavorite } = useFavorite();
   const [products, setProducts] = useState([]);
   const [textoBusqueda, setTextoBusqueda] = useState("");
