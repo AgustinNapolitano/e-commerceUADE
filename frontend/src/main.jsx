@@ -4,7 +4,8 @@ import App from './App.jsx'
 import './index.css'
 import {createRoot} from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import { AuthProvider } from './context/AuthContext'
+import { Provider } from 'react-redux'
+import { store } from './store/store'
 import { FavoriteProvider } from './context/FavoriteContext'
 import {Provider} from 'react-redux'
 import { store } from './store/index.js'
@@ -20,11 +21,9 @@ createRoot(document.getElementById('root')).render(
 
   <Provider store={store}>
     <BrowserRouter>
-      <AuthProvider>
           <FavoriteProvider>
             <App />
           </FavoriteProvider>
-      </AuthProvider>
     </BrowserRouter>
     </Provider>
 )

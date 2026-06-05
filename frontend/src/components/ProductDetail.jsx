@@ -5,15 +5,16 @@ import { useDispatch } from 'react-redux';
 import { addToCart } from '../store/slices/cartSlice';
 import { AlertTriangle, CheckCircle2 } from 'lucide-react';
 import './ProductDetail.css';
+import { useSelector } from 'react-redux';
 
 const ProductDetail = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
-  const { user } = useAuth();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [successMsg, setSuccessMsg] = useState('');
+  const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     const fetchProductDetail = async () => {

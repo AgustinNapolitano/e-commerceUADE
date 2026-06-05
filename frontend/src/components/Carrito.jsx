@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeFromCart, updateQuantity, clearCart } from '../store/slices/cartSlice';
+import { useSelector } from 'react-redux';
 import { 
   Trash2, 
   Plus, 
@@ -17,10 +17,10 @@ import {
 import './Carrito.css';
 
 const Carrito = () => {
-  const { user } = useAuth();
   const dispatch = useDispatch();
   const cartItems = useSelector(state => state.cart.cartItems);
   const cartTotal = cartItems.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+  const user = useSelector((state) => state.auth.user);
 
   const navigate = useNavigate();
   const location = useLocation();

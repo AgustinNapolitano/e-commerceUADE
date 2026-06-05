@@ -16,10 +16,10 @@ import {
   AlertTriangle 
 } from 'lucide-react';
 import './Pedido.css';
-import { useAuth } from '../context/AuthContext';
+import { useSelector } from 'react-redux';
 
 const Pedido = () => {
-  const { user } = useAuth();
+  const user = useSelector((state) => state.auth.user);
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
