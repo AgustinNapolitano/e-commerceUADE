@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useCart } from '../context/CartContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { removeFromCart, updateQuantity, clearCart } from '../store/slices/cartSlice';
 import { 
   Trash2, 
   Plus, 
@@ -17,13 +18,9 @@ import './Carrito.css';
 
 const Carrito = () => {
   const { user } = useAuth();
-  const { 
-    cartItems, 
-    removeFromCart, 
-    updateQuantity, 
-    clearCart, 
-    cartTotal 
-  } = useCart();
+  const dispatch = useDispatch();
+  const cartItems = useSelector(state => state.cart.cartItems);
+  const cartTotal = cartItems.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -94,7 +91,7 @@ const Carrito = () => {
       }
 
       // 6. Éxito: Vaciar carrito, mostrar mensaje y redirigir
-      clearCart();
+      dispatch(clearCart());
       setSuccessMsg('¡Compra realizada con éxito! Redirigiendo a tus pedidos...');
       
       setTimeout(() => {
@@ -185,7 +182,7 @@ const Carrito = () => {
                         <div className="quantity-control-wrapper d-flex align-items-center justify-content-center">
                           <button 
                             className="quantity-btn btn-sm btn-light border"
-                            onClick={() => updateQuantity(item.id, item.cantidad - 1)}
+                            onClick={() => dispatch(updateQuantity({ id: item.id, cantidad: item.cantidad - 1 }))}
                             disabled={loading}
                           >
                             <Minus size={14} />
@@ -193,7 +190,7 @@ const Carrito = () => {
                           <span className="quantity-value mx-3 fw-bold">{item.cantidad}</span>
                           <button 
                             className="quantity-btn btn-sm btn-light border"
-                            onClick={() => updateQuantity(item.id, item.cantidad + 1)}
+                            onClick={() => dispatch(updateQuantity({ id: item.id, cantidad: item.cantidad + 1 }))}
                             disabled={loading}
                           >
                             <Plus size={14} />
@@ -206,7 +203,7 @@ const Carrito = () => {
                       <td className="text-center py-3">
                         <button 
                           className="btn-remove-item text-danger border-0 bg-transparent"
-                          onClick={() => removeFromCart(item.id)}
+                          onClick={() => dispatch(removeFromCart(item.id))}
                           disabled={loading}
                           title="Eliminar del carrito"
                         >
@@ -226,7 +223,7 @@ const Carrito = () => {
               </Link>
               <button 
                 className="btn btn-outline-danger" 
-                onClick={clearCart}
+                onClick={() => dispatch(clearCart())}
                 disabled={loading}
               >
                 Vaciar Carrito

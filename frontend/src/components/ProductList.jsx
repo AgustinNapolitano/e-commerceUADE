@@ -4,6 +4,9 @@ import { useAuth } from '../context/AuthContext';
 import { useFavorite } from '../context/FavoriteContext';
 import { Heart } from 'lucide-react';
 import './ProductList.css';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../store/slices/cartSlice';
+import { useNavigate } from 'react-router-dom';
 
 const ProductList = () => {
   const location = useLocation();
@@ -16,7 +19,8 @@ const ProductList = () => {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   useEffect(() => {
 
     const fetchProducts = async () => {
@@ -152,13 +156,15 @@ const ProductList = () => {
             '';
 
           return (
-            <Link
-              to={`/productos/${id}`}
-              key={id || Math.random()}
-              className="product-link"
+            <div
+              key={id}
+              className="product-card"
             >
 
-              <div className="product-card">
+              <Link
+                to={`/productos/${id}`}
+                className="product-link"
+              >
 
                 {img && (
                   <img
@@ -184,30 +190,57 @@ const ProductList = () => {
                   Ver detalle →
                 </span>
 
-                {user && user.role === 'USER' && (() => {
-                  const isFav = favoriteItems.some(f => (f.id ?? f._id ?? f.codigo) === id);
-                  return (
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        isFav ? removeFromFavorite(id) : addToFavorite(product);
-                      }}
-                      title={isFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}
-                      style={{
-                        background: 'transparent',
-                        border: 'none',
-                        cursor: 'pointer',
-                        padding: '4px',
-                        color: isFav ? '#e53e3e' : '#999',
-                      }}
-                    >
-                      <Heart size={20} fill={isFav ? '#e53e3e' : 'none'} />
-                    </button>
-                  );
-                })()}
+              </Link>
 
-              </div>
-            </Link>
+              
+                <div className="product-actions">
+
+                  <button
+                    onClick={() => {
+                      if (!user) {
+                        navigate('/login');
+                        return;
+                      }
+
+                      dispatch(addToCart(product));
+
+                    }}
+                    className="add-cart-button"
+                  >
+                    Agregar al carrito
+                  </button>
+
+                  {(() => {
+                    const isFav = favoriteItems.some(
+                      f => (f.id ?? f._id ?? f.codigo) === id
+                    );
+
+                    return (
+                      <button
+                        onClick={() => {
+                          isFav
+                            ? removeFromFavorite(id)
+                            : addToFavorite(product);
+                        }}
+                        title={isFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+                        style={{
+                          background: 'transparent',
+                          border: 'none',
+                          cursor: 'pointer',
+                          padding: '4px',
+                          color: isFav ? '#e53e3e' : '#999',
+                        }}
+                      >
+                        <Heart
+                          size={20}
+                          fill={isFav ? '#e53e3e' : 'none'}
+                        />
+                      </button>
+                    );
+                  })()}
+
+                </div>
+            </div>
           );
         })}
       </div>

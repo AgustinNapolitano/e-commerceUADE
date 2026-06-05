@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useCart } from '../context/CartContext';
+import {useSelector} from 'react-redux';
 import { useFavorite } from '../context/FavoriteContext';
 import { User, LogOut, LogIn, ShoppingCart, Heart } from 'lucide-react';
 import './NavBar.css';
@@ -8,7 +8,8 @@ import './NavBar.css';
 function Navbar() {
   const location = useLocation();
   const { user, logout } = useAuth();
-  const { cartCount } = useCart();
+  const cartItems = useSelector((state) => state.cart.cartItems);
+  const cartCount = cartItems.reduce((total, item) => total + item.cantidad, 0);
   const { favoriteItems } = useFavorite();
 
   const isActive = (path) => location.pathname === path;
