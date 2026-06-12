@@ -60,3 +60,42 @@ body {
 a, button, select, input {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+.app.light {
+  background-color: #f8f9fa;
+  color: #212529;
+  min-height: 100vh;
+}
+
+.app.dark {
+  background-color: #121212;
+  color: #f1f1f1;
+  min-height: 100vh;
+}
+
+.app.dark .product-card,
+.app.dark .navbar,
+.app.dark .card {
+  background-color: #1f1f1f;
+  color: #f1f1f1;
+}
+
+.app.dark a {
+  color: inherit;
+}
+
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  color: inherit;
+}
+
+.theme-toggle-btn:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
