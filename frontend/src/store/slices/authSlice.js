@@ -20,11 +20,12 @@ const getInitialUser = () => {
   const token = localStorage.getItem('token');
   const role = localStorage.getItem('role');
   const nombre = localStorage.getItem('nombre');
+  const id = localStorage.getItem('id');
 
-  if (token && role && nombre) {
+  if (token && role && nombre && id) {
     const decoded = decodeToken(token);
     const email = decoded?.sub || '';
-    return { token, role, nombre, email };
+    return { token, role, nombre, email, id: parseInt(id, 10) };
   }
   return null;
 };
@@ -38,18 +39,20 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
-      const { token, role, nombre } = action.payload;
+      const { token, role, nombre, id } = action.payload;
       localStorage.setItem('token', token);
       localStorage.setItem('role', role);
       localStorage.setItem('nombre', nombre);
+      localStorage.setItem('id', id);
       const decoded = decodeToken(token);
       const email = decoded?.sub || '';
-      state.user = { token, role, nombre, email };
+      state.user = { token, role, nombre, email, id };
     },
     logout: (state) => {
       localStorage.removeItem('token');
       localStorage.removeItem('role');
       localStorage.removeItem('nombre');
+      localStorage.removeItem('id');
       state.user = null;
     },
   },

@@ -23,4 +23,7 @@ public class AuthenticationResponse {
     
     // Nombre del usuario para mostrarlo en el Navbar
     private String nombre;
+
+    // ID de usuario para interactuar con sus recursos en el frontend
+    private Long id;
 }

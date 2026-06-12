@@ -68,16 +68,28 @@ a, button, select, input {
 }
 
 .app.dark {
-  background-color: #121212;
-  color: #f1f1f1;
+  --background-color: #121212;
+  --surface-color: #1f1f1f;
+  --text-main: #f1f1f1;
+  --text-muted: #a0aec0;
+  --border-color: #2d3748;
+  --bs-body-color: #f1f1f1;
+  --bs-secondary-color: #a0aec0;
+
+  background-color: var(--background-color);
+  color: var(--text-main);
   min-height: 100vh;
+}
+
+.app.dark .text-muted {
+  color: var(--text-muted) !important;
 }
 
 .app.dark .product-card,
 .app.dark .navbar,
 .app.dark .card {
-  background-color: #1f1f1f;
-  color: #f1f1f1;
+  background-color: var(--surface-color);
+  color: var(--text-main);
 }
 
 .app.dark a {
