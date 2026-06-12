@@ -56,7 +56,7 @@ function Navbar() {
 
           {user && user.role === 'USER' && (
             <li>
-              <Link to="/carrito" className={isActive('/carrito') ? 'nav-link active' : 'nav-link'} style={{ display: 'flex', alignItems: 'center' }}>
+              <Link to="/carrito-redux" className={isActive('/carrito-redux') ? 'nav-link active' : 'nav-link'} style={{ display: 'flex', alignItems: 'center' }}>
                 <ShoppingCart size={16} className="me-1" />
                 Carrito
                 {cartCount > 0 && (
@@ -70,7 +70,7 @@ function Navbar() {
 
           {user && user.role === 'USER' && (
             <li>
-              <Link to="/favoritos" className={isActive('/favoritos') ? 'nav-link active' : 'nav-link'} style={{ display: 'flex', alignItems: 'center' }}>
+              <Link to="/favoritos-redux" className={isActive('/favoritos-redux') ? 'nav-link active' : 'nav-link'} style={{ display: 'flex', alignItems: 'center' }}>
                 <Heart size={16} className="me-1" />
                 Favoritos
                 {favoriteItems.length > 0 && (

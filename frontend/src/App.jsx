@@ -41,8 +41,8 @@ function App() {
         <Route path="/productos/:id" element={<ProductDetail />} />
         <Route path="/categorias" element={<CategoryList />} />
         <Route path="/pedidos" element={<Pedido />} />
-        <Route path="/carrito" element={<Carrito />} />
-        <Route path="/favoritos" element={<Favorite />} />
+        <Route path="/carrito-redux" element={<Carrito />} />
+        <Route path="/favoritos-redux" element={<Favorite />} />
         <Route path="/login" element={<Auth initialMode="login" />} />
         <Route path="/registro" element={<Auth initialMode="register" />} />
 
