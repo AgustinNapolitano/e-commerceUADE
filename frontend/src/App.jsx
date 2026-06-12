@@ -27,8 +27,12 @@ const ProtectedAdminRoute = ({ children }) => {
 };
 
 function App() {
+
+  const theme = useSelector((state) => state.theme.mode);
+
   return (
-    <>
+    <div className={`app ${theme}`}>
+    
       <NavBar />
 
       <Routes>
@@ -49,9 +53,9 @@ function App() {
               <AdminPanel />
             </ProtectedAdminRoute>
           }
-        />
-      </Routes>
-    </>
+          />
+       </Routes>
+    </div>
   )
 }
 

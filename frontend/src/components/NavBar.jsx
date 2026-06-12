@@ -3,6 +3,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
 import { User, LogOut, LogIn, ShoppingCart, Heart } from 'lucide-react';
 import './NavBar.css';
+import { toggleTheme } from '../store/slices/themeSlice';
+import { Sun, Moon } from 'lucide-react';
+
 
 function Navbar() {
   const location = useLocation();
@@ -11,6 +14,7 @@ function Navbar() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
   const favoriteItems = useSelector((state) => state.favorites.favoriteItems);
+  const theme = useSelector((state) => state.theme.mode);
 
   const isActive = (path) => location.pathname === path;
 
@@ -22,6 +26,16 @@ function Navbar() {
         </Link>
 
         <ul className="nav-menu">
+          <li>
+            <button
+              onClick={() => dispatch(toggleTheme())}
+              className="theme-toggle-btn"
+              title={theme === 'light' ? 'Activar modo oscuro' : 'Activar modo claro'}
+            >
+              {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
+              <span>{theme === 'light' ? 'Oscuro' : 'Claro'}</span>
+            </button>
+          </li>
           <li>
             <Link to="/" className={isActive('/') ? 'nav-link active' : 'nav-link'}>
               Inicio
