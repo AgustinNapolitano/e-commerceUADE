@@ -91,7 +91,7 @@ const Auth = ({ initialMode = 'login' }) => {
       }
 
       // Guardar sesión en redux store
-      dispatch(loginAction({ token: data.token, role: data.role, nombre: data.nombre }));
+      dispatch(loginAction({ token: data.token, role: data.role, nombre: data.nombre, id: data.id }));
       
       setSuccessMsg('¡Sesión iniciada con éxito! Redirigiendo...');
       
@@ -127,7 +127,7 @@ const Auth = ({ initialMode = 'login' }) => {
       }
 
       // Login automático usando redux store tras registro exitoso
-      dispatch(loginAction({ token: data.token, role: data.role, nombre: data.nombre }));
+      dispatch(loginAction({ token: data.token, role: data.role, nombre: data.nombre, id: data.id }));
       
       setSuccessMsg('¡Cuenta creada con éxito! Iniciando sesión...');
       

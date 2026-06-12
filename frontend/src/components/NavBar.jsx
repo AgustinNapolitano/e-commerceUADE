@@ -9,7 +9,7 @@ import { Sun, Moon } from 'lucide-react';
 
 function Navbar() {
   const location = useLocation();
-  const cartItems = useSelector((state) => state.cart.cartItems);
+  const cartItems = useSelector((state) => state.cart.items);
   const cartCount = cartItems.reduce((total, item) => total + item.cantidad, 0);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);

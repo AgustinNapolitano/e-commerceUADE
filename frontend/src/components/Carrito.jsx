@@ -17,7 +17,7 @@ import './Carrito.css';
 
 const Carrito = () => {
   const dispatch = useDispatch();
-  const cartItems = useSelector(state => state.cart.cartItems);
+  const cartItems = useSelector(state => state.cart.items);
   const cartTotal = cartItems.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
   const user = useSelector((state) => state.auth.user);
 
@@ -46,33 +46,13 @@ const Carrito = () => {
     setSuccessMsg('');
 
     try {
-      // 3. Obtener el ID del usuario actual consultando la lista de usuarios
-      const usersResponse = await fetch('http://localhost:8080/api/usuarios', {
-        headers: {
-          'Authorization': `Bearer ${user.token}`
-        }
-      });
-
-      if (!usersResponse.ok) {
-        throw new Error('No se pudo verificar la información del usuario');
-      }
-
-      const usersList = await usersResponse.json();
-      const currentUser = usersList.find(u => u.email === user.email);
-
-      if (!currentUser) {
-        throw new Error('Usuario actual no encontrado en la base de datos');
-      }
-
-      const usuarioId = currentUser.id;
-
-      // 4. Formatear los ítems del pedido según el DTO (productoId y cantidad)
+      // 3. Formatear los ítems del pedido según el DTO (productoId y cantidad)
       const pedidoItems = cartItems.map(item => ({
         productoId: item.id,
         cantidad: item.cantidad
       }));
 
-      // 5. Crear el pedido por POST
+      // 4. Crear el pedido por POST
       const pedidoResponse = await fetch('http://localhost:8080/api/pedidos', {
         method: 'POST',
         headers: {
@@ -80,7 +60,7 @@ const Carrito = () => {
           'Authorization': `Bearer ${user.token}`
         },
         body: JSON.stringify({
-          usuarioId,
+          usuarioId: user.id,
           items: pedidoItems
         })
       });
@@ -89,7 +69,7 @@ const Carrito = () => {
         throw new Error('Error al registrar el pedido en el servidor');
       }
 
-      // 6. Éxito: Vaciar carrito, mostrar mensaje y redirigir
+      // 5. Éxito: Vaciar carrito, mostrar mensaje y redirigir
       dispatch(clearCart());
       setSuccessMsg('¡Compra realizada con éxito! Redirigiendo a tus pedidos...');
       
