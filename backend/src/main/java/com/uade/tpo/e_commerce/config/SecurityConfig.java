@@ -46,7 +46,6 @@ public class SecurityConfig {
                 // Lectura de productos, categorías y pedidos es pública
                 .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/categorias/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/pedidos/**").permitAll()
                 
                 // Acciones de administración requieren rol ADMIN (Tarea Integrante 4)
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")

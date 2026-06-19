@@ -28,10 +28,18 @@ const Pedido = () => {
   const [expandedPedidoId, setExpandedPedidoId] = useState(null);
 
   const fetchPedidos = async () => {
+    if (!user?.token) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:8080/api/pedidos');
+      const response = await fetch('http://localhost:8080/api/pedidos', {
+        headers: {
+          'Authorization': `Bearer ${user.token}`
+        }
+      });
       if (!response.ok) {
         throw new Error('Error al cargar la lista de pedidos');
       }
@@ -48,7 +56,7 @@ const Pedido = () => {
 
   useEffect(() => {
     fetchPedidos();
-  }, []);
+  }, [user]);
 
   const toggleExpand = (id) => {
     if (expandedPedidoId === id) {
@@ -128,10 +136,8 @@ const Pedido = () => {
     }
   };
 
-  // Filter by user role so standard users only see their own orders
-  const userPedidos = user?.role === 'ADMIN'
-    ? pedidos
-    : pedidos.filter(p => p.emailUsuario === user?.email);
+  // El backend ya se encarga de filtrar la lista de pedidos de forma segura según el rol del usuario autenticado
+  const userPedidos = pedidos;
 
   // Calculations for KPI Cards
   const totalPedidos = userPedidos.length;

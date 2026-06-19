@@ -28,6 +28,17 @@ const ProtectedAdminRoute = ({ children }) => {
   return children;
 };
 
+// Componente para proteger rutas de usuarios logueados (clientes y admins)
+const ProtectedRoute = ({ children }) => {
+  const user = useSelector((state) => state.auth.user);
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+};
+
 function App() {
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.theme.mode);
@@ -61,9 +72,27 @@ function App() {
         <Route path="/productos" element={<ProductList />} />
         <Route path="/productos/:id" element={<ProductDetail />} />
         <Route path="/categorias" element={<CategoryList />} />
-        <Route path="/pedidos" element={<Pedido />} />
+        
+        <Route
+          path="/pedidos"
+          element={
+            <ProtectedRoute>
+              <Pedido />
+            </ProtectedRoute>
+          }
+        />
+        
         <Route path="/carrito-redux" element={<Carrito />} />
-        <Route path="/favoritos-redux" element={<Favorite />} />
+        
+        <Route
+          path="/favoritos-redux"
+          element={
+            <ProtectedRoute>
+              <Favorite />
+            </ProtectedRoute>
+          }
+        />
+        
         <Route path="/login" element={<Auth initialMode="login" />} />
         <Route path="/registro" element={<Auth initialMode="register" />} />
 

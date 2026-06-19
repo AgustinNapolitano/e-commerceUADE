@@ -15,6 +15,7 @@ import com.uade.tpo.e_commerce.model.ItemPedido;
 import com.uade.tpo.e_commerce.model.Pedido;
 import com.uade.tpo.e_commerce.model.Producto;
 import com.uade.tpo.e_commerce.model.Usuario;
+import com.uade.tpo.e_commerce.model.Role;
 import com.uade.tpo.e_commerce.repository.PedidoRepository;
 import com.uade.tpo.e_commerce.repository.ProductoRepository;
 import com.uade.tpo.e_commerce.repository.UsuarioRepository;
@@ -84,6 +85,18 @@ public class PedidoService {
     public List<PedidoResponse> getAllPedidos() {
         return pedidoRepository.findAll()
                 .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<PedidoResponse> getPedidosByUsuario(Usuario usuario) {
+        List<Pedido> pedidos;
+        if (usuario.getRole() == Role.ADMIN) {
+            pedidos = pedidoRepository.findAll();
+        } else {
+            pedidos = pedidoRepository.findByUsuarioId(usuario.getId());
+        }
+        return pedidos.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import com.uade.tpo.e_commerce.dto.PedidoRequest;
 import com.uade.tpo.e_commerce.dto.PedidoResponse;
 import com.uade.tpo.e_commerce.service.PedidoService;
+import com.uade.tpo.e_commerce.model.Usuario;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 @RestController
 @RequestMapping("/api/pedidos")
@@ -25,8 +27,8 @@ public class PedidoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PedidoResponse>> getAllPedidos() {
-        return ResponseEntity.ok(pedidoService.getAllPedidos());
+    public ResponseEntity<List<PedidoResponse>> getPedidos(@AuthenticationPrincipal Usuario usuario) {
+        return ResponseEntity.ok(pedidoService.getPedidosByUsuario(usuario));
     }
     
     @GetMapping("/{id}")
