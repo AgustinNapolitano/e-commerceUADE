@@ -60,6 +60,7 @@ const ProductDetail = () => {
   const price = product.precio ?? product.price ?? 0;
   const img = product.imagen ?? product.image ?? '';
   const categoria = product.categoriaNombre ?? product.category ?? '';
+  const stock = product.stock ?? 0;
 
   const isAdmin = user?.role === 'ADMIN';
 
@@ -75,14 +76,34 @@ const ProductDetail = () => {
           {categoria && <span className="product-detail-category">{categoria}</span>}
           <h1 className="product-detail-title">{name}</h1>
           <p className="product-detail-price">${Number(price).toLocaleString('es-AR')}</p>
+          
+          <div className="product-detail-stock-container" style={{ margin: '15px 0' }}>
+            <span className="product-detail-stock-label" style={{ fontWeight: '500', color: '#666' }}>Stock disponible: </span>
+            <span 
+              className={`product-detail-stock-value ${stock > 0 ? 'in-stock' : 'out-of-stock'}`}
+              style={{
+                fontWeight: 'bold',
+                color: stock > 0 ? '#10B981' : '#EF4444',
+                backgroundColor: stock > 0 ? '#ECFDF5' : '#FEF2F2',
+                padding: '4px 10px',
+                borderRadius: '20px',
+                fontSize: '0.9rem'
+              }}
+            >
+              {stock > 0 ? `${stock} unidades` : 'Agotado'}
+            </span>
+          </div>
+
           <p className="product-detail-description">{desc}</p>
           
           {user && user.role === 'USER' && (
             <button 
               className="product-detail-buy-button"
               onClick={handleAddToCart}
+              disabled={stock <= 0}
+              style={stock <= 0 ? { backgroundColor: '#ccc', cursor: 'not-allowed' } : {}}
             >
-              Agregar al Carrito
+              {stock > 0 ? 'Agregar al Carrito' : 'Sin Stock'}
             </button>
           )}
 

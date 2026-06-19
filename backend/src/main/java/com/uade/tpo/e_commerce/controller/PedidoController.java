@@ -11,6 +11,7 @@ import com.uade.tpo.e_commerce.dto.PedidoRequest;
 import com.uade.tpo.e_commerce.dto.PedidoResponse;
 import com.uade.tpo.e_commerce.service.PedidoService;
 import com.uade.tpo.e_commerce.model.Usuario;
+import com.uade.tpo.e_commerce.model.EstadoPedido;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 @RestController
@@ -34,5 +35,12 @@ public class PedidoController {
     @GetMapping("/{id}")
     public ResponseEntity<PedidoResponse> getPedidoById(@PathVariable Long id) {
         return ResponseEntity.ok(pedidoService.getPedidoById(id));
+    }
+
+    @PutMapping("/{id}/estado")
+    public ResponseEntity<PedidoResponse> updatePedidoEstado(
+            @PathVariable Long id,
+            @RequestParam EstadoPedido nuevoEstado) {
+        return ResponseEntity.ok(pedidoService.updatePedidoEstado(id, nuevoEstado));
     }
 }

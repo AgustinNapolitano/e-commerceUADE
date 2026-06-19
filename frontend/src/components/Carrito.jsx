@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { removeFromCart, updateQuantity, clearCart } from '../store/slices/cartSlice';
+import { removeFromCart, updateQuantity, clearCart, clearCartServer } from '../store/slices/cartSlice';
 import { 
   Trash2, 
   Plus, 
@@ -69,8 +69,8 @@ const Carrito = () => {
         throw new Error('Error al registrar el pedido en el servidor');
       }
 
-      // 5. Éxito: Vaciar carrito, mostrar mensaje y redirigir
-      dispatch(clearCart());
+      // 5. Éxito: Vaciar carrito en el servidor, mostrar mensaje y redirigir
+      dispatch(clearCartServer());
       setSuccessMsg('¡Compra realizada con éxito! Redirigiendo a tus pedidos...');
       
       setTimeout(() => {

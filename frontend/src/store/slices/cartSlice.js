@@ -60,6 +60,34 @@ export const syncCart = createAsyncThunk(
   }
 );
 
+// Thunk para vaciar de forma explícita el carrito en el backend tras el checkout
+export const clearCartServer = createAsyncThunk(
+  'cart/clearCartServer',
+  async (_, { getState, dispatch, rejectWithValue }) => {
+    try {
+      const state = getState();
+      const token = state.auth.user?.token;
+      const authHeader = token ? (token.startsWith('Bearer ') ? token : `Bearer ${token}`) : '';
+      const response = await fetch('http://localhost:8080/api/carrito', {
+        method: 'DELETE',
+        headers: {
+          'Authorization': authHeader
+        },
+        credentials: 'include',
+        mode: 'cors'
+      });
+      if (!response.ok) {
+        throw new Error('Error al vaciar el carrito en el servidor');
+      }
+      // Vaciar localmente
+      dispatch(clearCart());
+      return null;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 // cartSlice cumple la función del CartProvider en useContext
 const cartSlice = createSlice({
   name: 'cart',

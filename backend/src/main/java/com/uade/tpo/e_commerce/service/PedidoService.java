@@ -16,6 +16,7 @@ import com.uade.tpo.e_commerce.model.Pedido;
 import com.uade.tpo.e_commerce.model.Producto;
 import com.uade.tpo.e_commerce.model.Usuario;
 import com.uade.tpo.e_commerce.model.Role;
+import com.uade.tpo.e_commerce.model.EstadoPedido;
 import com.uade.tpo.e_commerce.repository.PedidoRepository;
 import com.uade.tpo.e_commerce.repository.ProductoRepository;
 import com.uade.tpo.e_commerce.repository.UsuarioRepository;
@@ -106,6 +107,14 @@ public class PedidoService {
                 .orElseThrow(() -> new RecursoNotFoundException("No hay pedido con esa ID"));
 
         return mapToResponse(pedido);
+    }
+
+    public PedidoResponse updatePedidoEstado(Long id, EstadoPedido nuevoEstado) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNotFoundException("No hay pedido con esa ID: " + id));
+        pedido.setEstado(nuevoEstado);
+        Pedido actualizado = pedidoRepository.save(pedido);
+        return mapToResponse(actualizado);
     }
 
     private PedidoResponse mapToResponse(Pedido pedido) {
