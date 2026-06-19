@@ -4,8 +4,9 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 export const fetchCartItems = createAsyncThunk(
   // 'cart/fetchCartItems' es el tipo de acción que se genera automáticamente para identificar esta acción asincrónica en los reducers
   'cart/fetchCartItems',
-  async () => {
-    const token = localStorage.getItem('token');
+  async (_, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const token = state.auth.user?.token;
     const authHeader = token ? (token.startsWith('Bearer ') ? token : `Bearer ${token}`) : '';
     const response = await fetch('http://localhost:8080/api/carrito', {
       method: 'GET',
@@ -28,9 +29,10 @@ export const fetchCartItems = createAsyncThunk(
 // Thunk para sincronizar el estado local con la API en el backend
 export const syncCart = createAsyncThunk(
   'cart/syncCart',
-  async (items, { rejectWithValue }) => {
+  async (items, { getState, rejectWithValue }) => {
     try {
-      const token = localStorage.getItem('token');
+      const state = getState();
+      const token = state.auth.user?.token;
       const authHeader = token ? (token.startsWith('Bearer ') ? token : `Bearer ${token}`) : '';
       const response = await fetch('http://localhost:8080/api/carrito', {
         method: 'POST',
@@ -132,7 +134,10 @@ const cartSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchCartItems.fulfilled, (state, action) => {
-        state.items = action.payload;
+        state.items = action.payload.map(item => ({
+          ...item,
+          imagen: item.imagen ?? item.imageUrl ?? item.image ?? ''
+        }));
         state.total = state.items.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
         state.loading = false;
         state.error = null;
@@ -143,9 +148,9 @@ const cartSlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(syncCart.fulfilled, (state, action) => {
-        state.items = action.payload;
-        state.total = state.items.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
-        localStorage.setItem('cart', JSON.stringify(state.items));
+        // No actualizamos state.items aquí para evitar el bucle infinito de renderizados/sincronizaciones,
+        // ya que el estado local del cliente es el origen de la verdad y ya está actualizado.
+        state.error = null;
       })
       .addCase(syncCart.rejected, (state, action) => {
         state.error = action.payload;

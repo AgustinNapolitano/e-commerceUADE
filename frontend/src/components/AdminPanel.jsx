@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import './AdminPanel.css';
 
 const AdminPanel = () => {
+  const user = useSelector((state) => state.auth.user);
+  const token = user?.token;
   const [productos, setProductos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,7 +28,6 @@ const AdminPanel = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
       const headers = {
         'Content-Type': 'application/json',
         ...(token ? { 'Authorization': `Bearer ${token}` } : {})
@@ -79,7 +81,6 @@ const AdminPanel = () => {
         categoriaId: formData.categoriaId ? parseInt(formData.categoriaId) : null
       };
 
-      const token = localStorage.getItem('token');
       const headers = {
         'Content-Type': 'application/json',
         ...(token ? { 'Authorization': `Bearer ${token}` } : {})
@@ -111,7 +112,6 @@ const AdminPanel = () => {
   const handleDelete = async (id) => {
     if (window.confirm("¿Estás seguro de eliminar este producto?")) {
       try {
-        const token = localStorage.getItem('token');
         const response = await fetch(`http://localhost:8080/api/productos/${id}`, {
           method: 'DELETE',
           headers: token ? { 'Authorization': `Bearer ${token}` } : {}
