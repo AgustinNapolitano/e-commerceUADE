@@ -8,6 +8,7 @@ import Auth from './components/Auth'
 import AdminPanel from './components/AdminPanel'
 import Carrito from './components/Carrito'
 import Favorite from './components/Favorite'
+import Perfil from './components/Perfil'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect } from 'react'
@@ -91,6 +92,15 @@ function App() {
           element={
             <ProtectedRoute>
               <Favorite />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/perfil"
+          element={
+            <ProtectedRoute>
+              <Perfil />
             </ProtectedRoute>
           }
         />

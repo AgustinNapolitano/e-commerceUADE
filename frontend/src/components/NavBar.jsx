@@ -101,10 +101,10 @@ function Navbar() {
 
           {user ? (
             <li className="nav-user-section">
-              <div className="nav-user-badge">
+              <Link to="/perfil" className="nav-user-badge" style={{ textDecoration: 'none', cursor: 'pointer' }} title="Ver mi perfil">
                 <User size={16} className="nav-user-icon" />
                 <span className="nav-user-greeting">¡Hola, {user.nombre}!</span>
-              </div>
+              </Link>
               <button onClick={() => dispatch(logout())} className="nav-logout-btn" title="Cerrar Sesión">
                 <LogOut size={16} />
                 <span>Salir</span>
