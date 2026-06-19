@@ -23,6 +23,14 @@ const AdminPanel = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
 
+  // Estado para el formulario CRUD Categorías
+  const [catFormData, setCatFormData] = useState({
+    nombre: '',
+    descripcion: ''
+  });
+  const [isEditingCat, setIsEditingCat] = useState(false);
+  const [editCatId, setEditCatId] = useState(null);
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -161,6 +169,80 @@ const AdminPanel = () => {
     }
   };
 
+  const handleCatChange = (e) => {
+    setCatFormData({ ...catFormData, [e.target.name]: e.target.value });
+  };
+
+  const handleCatEdit = (cat) => {
+    setCatFormData({
+      nombre: cat.nombre,
+      descripcion: cat.descripcion || ''
+    });
+    setIsEditingCat(true);
+    setEditCatId(cat.id);
+  };
+
+  const resetCatForm = () => {
+    setCatFormData({ nombre: '', descripcion: '' });
+    setIsEditingCat(false);
+    setEditCatId(null);
+  };
+
+  const handleCatSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const payload = {
+        nombre: catFormData.nombre,
+        descripcion: catFormData.descripcion
+      };
+
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      };
+
+      const url = isEditingCat
+        ? `http://localhost:8080/api/categorias/${editCatId}`
+        : 'http://localhost:8080/api/categorias';
+      const method = isEditingCat ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers,
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        alert(isEditingCat ? 'Categoría actualizada con éxito' : 'Categoría creada con éxito');
+        resetCatForm();
+        fetchData();
+      } else {
+        alert('Error al guardar la categoría');
+      }
+    } catch (error) {
+      console.error("Error saving category:", error);
+    }
+  };
+
+  const handleCatDelete = async (id) => {
+    if (window.confirm("¿Estás seguro de eliminar esta categoría?")) {
+      try {
+        const response = await fetch(`http://localhost:8080/api/categorias/${id}`, {
+          method: 'DELETE',
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+
+        if (response.ok) {
+          fetchData();
+        } else {
+          alert('Error al eliminar la categoría. (Es posible que tenga artículos asociados)');
+        }
+      } catch (error) {
+        console.error("Error deleting category:", error);
+      }
+    }
+  };
+
   return (
     <div className="admin-container">
       <div className="admin-header">
@@ -200,6 +282,21 @@ const AdminPanel = () => {
           }}
         >
           Pedidos de Clientes
+        </button>
+        <button 
+          onClick={() => setActiveTab('categorias')}
+          className={`admin-tab-btn ${activeTab === 'categorias' ? 'active' : ''}`}
+          style={{
+            padding: '8px 16px',
+            fontWeight: 'bold',
+            border: 'none',
+            backgroundColor: 'transparent',
+            borderBottom: activeTab === 'categorias' ? '3px solid #1A73E8' : 'none',
+            color: activeTab === 'categorias' ? '#1A73E8' : '#666',
+            cursor: 'pointer'
+          }}
+        >
+          Categorías
         </button>
       </div>
 
@@ -433,6 +530,93 @@ const AdminPanel = () => {
               </table>
             </div>
           )}
+        </div>
+      )}
+
+      {activeTab === 'categorias' && (
+        <div className="admin-grid">
+          {/* Formulario CRUD Categorías */}
+          <div className="admin-card form-card">
+            <h3>{isEditingCat ? 'Editar Categoría' : 'Nueva Categoría'}</h3>
+            <form onSubmit={handleCatSubmit} className="admin-form">
+              <div className="form-group">
+                <label>Nombre de la Categoría *</label>
+                <input
+                  type="text"
+                  name="nombre"
+                  placeholder="Ej. Componentes"
+                  value={catFormData.nombre}
+                  onChange={handleCatChange}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Descripción</label>
+                <textarea
+                  name="descripcion"
+                  placeholder="Detalles sobre la categoría..."
+                  value={catFormData.descripcion}
+                  onChange={handleCatChange}
+                ></textarea>
+              </div>
+
+              <div className="form-actions">
+                <button type="submit" className="btn-save">
+                  {isEditingCat ? 'Guardar Cambios' : 'Crear Categoría'}
+                </button>
+                {isEditingCat && (
+                  <button type="button" onClick={resetCatForm} className="btn-cancel">
+                    Cancelar
+                  </button>
+                )}
+              </div>
+            </form>
+          </div>
+
+          {/* Lista de Categorías */}
+          <div className="admin-card list-card">
+            <h3>Listado de Categorías</h3>
+            {loading ? (
+              <div className="admin-loading">Cargando categorías...</div>
+            ) : categorias.length === 0 ? (
+              <div className="admin-empty">No hay categorías cargadas en el sistema.</div>
+            ) : (
+              <div className="table-responsive">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Nombre</th>
+                      <th>Descripción</th>
+                      <th className="text-center">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {categorias.map(cat => (
+                      <tr key={cat.id}>
+                        <td className="col-id">#{cat.id}</td>
+                        <td>
+                          <strong>{cat.nombre}</strong>
+                        </td>
+                        <td>
+                          <p className="prod-desc-text" style={{ margin: 0 }}>{cat.descripcion || 'Sin descripción'}</p>
+                        </td>
+                        <td className="col-actions text-center">
+                          <button onClick={() => handleCatEdit(cat)} className="btn-action-edit">
+                            Editar
+                          </button>
+                          <button onClick={() => handleCatDelete(cat.id)} className="btn-action-delete">
+                            Eliminar
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
