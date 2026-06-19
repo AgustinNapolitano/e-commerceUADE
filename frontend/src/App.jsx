@@ -12,6 +12,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 import { fetchCartItems, syncCart } from './store/slices/cartSlice'
+import { fetchFavorites } from './store/slices/favoritesSlice'
 
 // Componente para proteger la ruta de administrador
 const ProtectedAdminRoute = ({ children }) => {
@@ -45,10 +46,11 @@ function App() {
   const user = useSelector((state) => state.auth.user);
   const cartItems = useSelector((state) => state.cart.items);
 
-  // 1. Cargar el carrito desde el backend al iniciar sesión
+  // 1. Cargar el carrito y favoritos desde el backend al iniciar sesión
   useEffect(() => {
     if (user) {
       dispatch(fetchCartItems());
+      dispatch(fetchFavorites());
     }
   }, [user, dispatch]);
 

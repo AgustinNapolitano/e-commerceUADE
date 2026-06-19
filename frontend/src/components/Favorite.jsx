@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { removeFromFavorite } from '../store/slices/favoritesSlice';
+import { removeFavoriteServer } from '../store/slices/favoritesSlice';
 import { Heart, Trash2 } from 'lucide-react';
 
 const Favorite = () => {
@@ -63,7 +63,7 @@ const Favorite = () => {
                 Ver detalle
               </Link>
               <button
-                onClick={() => dispatch(removeFromFavorite(item.id))}
+                onClick={() => dispatch(removeFavoriteServer(item.id))}
                 title="Quitar de favoritos"
                 style={{ background: 'transparent', border: '1px solid #e53e3e', borderRadius: '8px', padding: '6px 10px', cursor: 'pointer', color: '#e53e3e' }}
               >

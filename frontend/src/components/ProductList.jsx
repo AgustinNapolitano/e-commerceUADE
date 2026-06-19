@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Heart } from 'lucide-react';
 import './ProductList.css';
 import { addToCart } from '../store/slices/cartSlice';
-import { addToFavorite, removeFromFavorite } from '../store/slices/favoritesSlice';
+import { addFavoriteServer, removeFavoriteServer } from '../store/slices/favoritesSlice';
 import { useNavigate } from 'react-router-dom';
 
 const ProductList = () => {
@@ -217,9 +217,13 @@ const ProductList = () => {
                     return (
                       <button
                         onClick={() => {
+                          if (!user) {
+                            navigate('/login');
+                            return;
+                          }
                           isFav
-                            ? dispatch(removeFromFavorite(id))
-                            : dispatch(addToFavorite(product));
+                            ? dispatch(removeFavoriteServer(id))
+                            : dispatch(addFavoriteServer(id));
                         }}
                         title={isFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}
                         style={{
