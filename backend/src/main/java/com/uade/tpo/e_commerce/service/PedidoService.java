@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.uade.tpo.e_commerce.dto.PedidoRequest;
 import com.uade.tpo.e_commerce.dto.PedidoResponse;
 import com.uade.tpo.e_commerce.exception.RecursoNotFoundException;
+import com.uade.tpo.e_commerce.exception.ReglaNegocioException;
+import org.springframework.http.HttpStatus;
 import com.uade.tpo.e_commerce.model.ItemPedido;
 import com.uade.tpo.e_commerce.model.Pedido;
 import com.uade.tpo.e_commerce.model.Producto;
@@ -43,7 +45,18 @@ public class PedidoService {
         List<ItemPedido> items = request.getItems().stream().map(itemReq -> {
 
             Producto producto = productoRepository.findById(itemReq.getProductoId())
-                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                    .orElseThrow(() -> new RecursoNotFoundException("Producto no encontrado con ID: " + itemReq.getProductoId()));
+
+            if (producto.getStock() < itemReq.getCantidad()) {
+                throw new ReglaNegocioException(
+                        "Stock insuficiente para el producto: " + producto.getNombre() + " (Disponible: " + producto.getStock() + ")",
+                        HttpStatus.BAD_REQUEST
+                );
+            }
+
+            // Restar stock
+            producto.setStock(producto.getStock() - itemReq.getCantidad());
+            productoRepository.save(producto);
 
             ItemPedido item = new ItemPedido();
             item.setPedido(pedido);
