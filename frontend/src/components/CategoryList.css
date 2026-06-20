@@ -11,25 +11,24 @@
 .titulo-seccion {
   font-size: 2.5rem;
   font-weight: 800;
-  color: #111827;
+  color: var(--text-main);
   margin-bottom: 0.75rem;
   letter-spacing: -0.025em;
 }
 
 .subtitulo-seccion {
   font-size: 1.1rem;
-  color: #4B5563;
+  color: var(--text-muted);
   max-width: 600px;
   margin: 0 auto;
 }
 
 .categories-grid {
-  display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(280px, 1fr)
-  );
-  gap: 2rem;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2.5rem;
+  padding: 1rem 0;
 }
 
 .category-link {
@@ -39,32 +38,36 @@
 }
 
 .category-card {
-  border: 1px solid #E5E7EB;
-  border-radius: 16px;
-  padding: 2rem;
-  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  width: 180px;
+  height: 180px;
+  background-color: var(--surface-color);
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 1.25rem;
-  height: 100%;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
   transition:
     transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: center;
+  aspect-ratio: 1 / 1;
 }
 
 .category-card:hover {
-  transform: translateY(-6px);
-  border-color: #D1D5DB;
-  box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.08);
+  transform: translateY(-6px) scale(1.05);
+  border-color: var(--primary-color);
+  box-shadow: 0 10px 25px rgba(81, 64, 101, 0.2);
 }
 
 .category-icon-wrapper {
-  width: 64px;
-  height: 64px;
-  border-radius: 14px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -72,35 +75,22 @@
 }
 
 .category-card:hover .category-icon-wrapper {
-  transform: scale(1.08) rotate(2deg);
+  transform: scale(1.1) rotate(5deg);
 }
 
 .category-title {
   margin: 0;
-  font-size: 1.35rem;
+  font-size: 1.1rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--text-main);
 }
 
 .category-description {
-  margin: 0;
-  font-size: 0.95rem;
-  color: #6B7280;
-  line-height: 1.5;
-  flex-grow: 1;
+  display: none;
 }
 
 .category-action {
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin-top: auto;
-  display: inline-flex;
-  align-items: center;
-  transition: transform 0.2s ease;
-}
-
-.category-card:hover .category-action {
-  transform: translateX(4px);
+  display: none;
 }
 
 /* Loading & Error containers */

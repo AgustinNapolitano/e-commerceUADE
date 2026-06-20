@@ -32,27 +32,27 @@ const CategoryList = () => {
     const cleanName = name.toLowerCase();
     if (cleanName.includes('electr') || cleanName.includes('tecn') || cleanName.includes('comput')) {
       return {
-        icon: <Laptop size={32} />,
+        icon: <Laptop size={40} />,
         bg: '#EBF3FE',
         color: '#1A73E8'
       };
     }
     if (cleanName.includes('vehic') || cleanName.includes('auto') || cleanName.includes('coche')) {
       return {
-        icon: <Car size={32} />,
+        icon: <Car size={40} />,
         bg: '#E6F4EA',
         color: '#137333'
       };
     }
     if (cleanName.includes('ropa') || cleanName.includes('indumentaria') || cleanName.includes('vest')) {
       return {
-        icon: <Shirt size={32} />,
+        icon: <Shirt size={40} />,
         bg: '#F3E8FD',
         color: '#9333EA'
       };
     }
     return {
-      icon: <Folder size={32} />,
+      icon: <Folder size={40} />,
       bg: '#F1F3F4',
       color: '#5F6368'
     };

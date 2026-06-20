@@ -3,8 +3,9 @@ import { useParams, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../store/slices/cartSlice';
 import { AlertTriangle, CheckCircle2 } from 'lucide-react';
-import './ProductDetail.css';
 import { useSelector } from 'react-redux';
+import { sileo } from 'sileo';
+import './ProductDetail.css';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -12,7 +13,6 @@ const ProductDetail = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [successMsg, setSuccessMsg] = useState('');
   const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
@@ -45,10 +45,10 @@ const ProductDetail = () => {
     }
     dispatch(addToCart(product));
     const productName = product?.nombre || product?.title || product?.name || 'Producto';
-    setSuccessMsg(`¡${productName} agregado al carrito!`);
-    setTimeout(() => {
-      setSuccessMsg('');
-    }, 3000);
+    sileo.success({ 
+      title: '¡Agregado al carrito!', 
+      description: `${productName} se sumó a tus compras.` 
+    });
   };
 
   if (loading) return <div className="product-detail-center">Cargando detalle del producto...</div>;
@@ -111,13 +111,6 @@ const ProductDetail = () => {
             <div className="admin-warning-alert">
               <AlertTriangle size={18} />
               <span>Los administradores no pueden realizar compras</span>
-            </div>
-          )}
-
-          {successMsg && (
-            <div className="success-alert">
-              <CheckCircle2 size={18} />
-              <span>{successMsg}</span>
             </div>
           )}
         </div>

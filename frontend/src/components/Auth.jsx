@@ -3,13 +3,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { login as loginAction } from '../store/slices/authSlice';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Mail, 
-  Lock, 
-  Eye, 
-  EyeOff, 
-  AlertCircle, 
-  CheckCircle2, 
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  AlertCircle,
+  CheckCircle2,
   ArrowRight,
   User,
   UserCheck,
@@ -17,6 +17,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import './Auth.css';
+import { sileo } from 'sileo';
 
 const Auth = ({ initialMode = 'login' }) => {
   const dispatch = useDispatch();
@@ -92,15 +93,20 @@ const Auth = ({ initialMode = 'login' }) => {
 
       // Guardar sesión en redux store
       dispatch(loginAction({ token: data.token, role: data.role, nombre: data.nombre, id: data.id }));
-      
-      setSuccessMsg('¡Sesión iniciada con éxito! Redirigiendo...');
-      
+
+      sileo.success({
+        title: '¡Sesión iniciada con éxito!',
+        description: `Bienvenido de vuelta, ${data.nombre || 'usuario'}. Redirigiendo...`
+      });
+
       setTimeout(() => {
         navigate(from, { replace: true });
       }, 1500);
 
     } catch (err) {
-      setErrorMsg(err.message);
+      const msg = err.message || 'Credenciales inválidas. Por favor, verifica tus datos.';
+      setErrorMsg(msg);
+      sileo.error({ title: 'Error de inicio de sesión', description: msg });
     } finally {
       setLoading(false);
     }
@@ -128,14 +134,19 @@ const Auth = ({ initialMode = 'login' }) => {
 
       // Login automático usando redux store tras registro exitoso
       dispatch(loginAction({ token: data.token, role: data.role, nombre: data.nombre, id: data.id }));
-      
-      setSuccessMsg('¡Cuenta creada con éxito! Iniciando sesión...');
-      
+
+      sileo.success({
+        title: '¡Cuenta creada con éxito!',
+        description: 'Iniciando tu sesión de forma automática. Redirigiendo...'
+      });
+
       setTimeout(() => {
         navigate('/', { replace: true });
       }, 1500);
     } catch (err) {
-      setErrorMsg(err.message);
+      const msg = err.message || 'Error al registrarse. Por favor, verifica los campos.';
+      setErrorMsg(msg);
+      sileo.error({ title: 'Error de registro', description: msg });
     } finally {
       setLoading(false);
     }
@@ -152,8 +163,8 @@ const Auth = ({ initialMode = 'login' }) => {
   return (
     <div className="auth-page-wrapper">
       <div className="radial-background-glow"></div>
-      
-      <motion.div 
+
+      <motion.div
         layout
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -163,7 +174,7 @@ const Auth = ({ initialMode = 'login' }) => {
         {/* Encabezado del Card */}
         <div className="auth-card-header">
           <div className="brand-logo-container">
-            <span className="logo-emoji">🛒</span>
+            <span className="logo-emoji"></span>
             <span className="logo-text">UADE E-Commerce</span>
           </div>
           <p className="card-subtitle">
@@ -173,30 +184,30 @@ const Auth = ({ initialMode = 'login' }) => {
 
         {/* Pestañas de Navegación del Formulario */}
         <div className="auth-tabs">
-          <button 
-            type="button" 
+          <button
+            type="button"
             className={`auth-tab ${mode === 'login' ? 'active' : ''}`}
             onClick={() => switchMode('login')}
           >
             {mode === 'login' && (
-              <motion.div 
-                layoutId="active-tab-indicator" 
-                className="active-tab-pill" 
+              <motion.div
+                layoutId="active-tab-indicator"
+                className="active-tab-pill"
                 transition={{ type: 'spring', stiffness: 380, damping: 30 }}
               />
             )}
             <span className="tab-label">Iniciar Sesión</span>
           </button>
-          
-          <button 
-            type="button" 
+
+          <button
+            type="button"
             className={`auth-tab ${mode === 'register' ? 'active' : ''}`}
             onClick={() => switchMode('register')}
           >
             {mode === 'register' && (
-              <motion.div 
-                layoutId="active-tab-indicator" 
-                className="active-tab-pill" 
+              <motion.div
+                layoutId="active-tab-indicator"
+                className="active-tab-pill"
                 transition={{ type: 'spring', stiffness: 380, damping: 30 }}
               />
             )}
@@ -207,7 +218,7 @@ const Auth = ({ initialMode = 'login' }) => {
         {/* Mensajes de feedback con altura animada */}
         <AnimatePresence mode="wait">
           {errorMsg && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: -10, height: 0 }}
               animate={{ opacity: 1, y: 0, height: 'auto' }}
               exit={{ opacity: 0, y: -10, height: 0 }}
@@ -219,7 +230,7 @@ const Auth = ({ initialMode = 'login' }) => {
           )}
 
           {successMsg && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: -10, height: 0 }}
               animate={{ opacity: 1, y: 0, height: 'auto' }}
               exit={{ opacity: 0, y: -10, height: 0 }}
@@ -235,7 +246,7 @@ const Auth = ({ initialMode = 'login' }) => {
         <div className="auth-form-content">
           <AnimatePresence mode="wait">
             {mode === 'login' ? (
-              <motion.form 
+              <motion.form
                 key="login-form"
                 initial={{ opacity: 0, x: -15 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -248,8 +259,8 @@ const Auth = ({ initialMode = 'login' }) => {
                   <label htmlFor="login-email">Correo Electrónico</label>
                   <div className="input-with-icon">
                     <Mail size={18} className="input-icon" />
-                    <input 
-                      type="email" 
+                    <input
+                      type="email"
                       id="login-email"
                       name="email"
                       placeholder="nombre@correo.com"
@@ -264,8 +275,8 @@ const Auth = ({ initialMode = 'login' }) => {
                   <label htmlFor="login-password">Contraseña</label>
                   <div className="input-with-icon">
                     <Lock size={18} className="input-icon" />
-                    <input 
-                      type={showPassword ? "text" : "password"} 
+                    <input
+                      type={showPassword ? "text" : "password"}
                       id="login-password"
                       name="password"
                       placeholder="••••••••"
@@ -273,8 +284,8 @@ const Auth = ({ initialMode = 'login' }) => {
                       onChange={handleLoginChange}
                       required
                     />
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="password-toggle-btn"
                       onClick={() => setShowPassword(!showPassword)}
                     >
@@ -283,9 +294,9 @@ const Auth = ({ initialMode = 'login' }) => {
                   </div>
                 </div>
 
-                <button 
-                  type="submit" 
-                  className="auth-submit-btn" 
+                <button
+                  type="submit"
+                  className="auth-submit-btn"
                   disabled={loading}
                 >
                   {loading ? (
@@ -299,7 +310,7 @@ const Auth = ({ initialMode = 'login' }) => {
                 </button>
               </motion.form>
             ) : (
-              <motion.form 
+              <motion.form
                 key="register-form"
                 initial={{ opacity: 0, x: 15 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -313,8 +324,8 @@ const Auth = ({ initialMode = 'login' }) => {
                     <label htmlFor="reg-nombre">Nombre</label>
                     <div className="input-with-icon">
                       <User size={18} className="input-icon" />
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         id="reg-nombre"
                         name="nombre"
                         placeholder="Tu nombre"
@@ -328,8 +339,8 @@ const Auth = ({ initialMode = 'login' }) => {
                     <label htmlFor="reg-apellido">Apellido</label>
                     <div className="input-with-icon">
                       <User size={18} className="input-icon" />
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         id="reg-apellido"
                         name="apellido"
                         placeholder="Tu apellido"
@@ -345,8 +356,8 @@ const Auth = ({ initialMode = 'login' }) => {
                   <label htmlFor="reg-username">Nombre de Usuario</label>
                   <div className="input-with-icon">
                     <UserCheck size={18} className="input-icon" />
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       id="reg-username"
                       name="nombreUsuario"
                       placeholder="Ej: juanperez123"
@@ -361,8 +372,8 @@ const Auth = ({ initialMode = 'login' }) => {
                   <label htmlFor="reg-email">Correo Electrónico</label>
                   <div className="input-with-icon">
                     <Mail size={18} className="input-icon" />
-                    <input 
-                      type="email" 
+                    <input
+                      type="email"
                       id="reg-email"
                       name="email"
                       placeholder="ejemplo@email.com"
@@ -377,8 +388,8 @@ const Auth = ({ initialMode = 'login' }) => {
                   <label htmlFor="reg-password">Contraseña</label>
                   <div className="input-with-icon">
                     <Lock size={18} className="input-icon" />
-                    <input 
-                      type={showPassword ? "text" : "password"} 
+                    <input
+                      type={showPassword ? "text" : "password"}
                       id="reg-password"
                       name="password"
                       placeholder="Mínimo 6 caracteres"
@@ -387,8 +398,8 @@ const Auth = ({ initialMode = 'login' }) => {
                       required
                       minLength={6}
                     />
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="password-toggle-btn"
                       onClick={() => setShowPassword(!showPassword)}
                     >
@@ -402,8 +413,8 @@ const Auth = ({ initialMode = 'login' }) => {
                     <label htmlFor="reg-birth">Fecha de Nacimiento</label>
                     <div className="input-with-icon">
                       <Calendar size={18} className="input-icon" />
-                      <input 
-                        type="date" 
+                      <input
+                        type="date"
                         id="reg-birth"
                         name="fechaNacimiento"
                         value={registerData.fechaNacimiento}
@@ -415,11 +426,11 @@ const Auth = ({ initialMode = 'login' }) => {
                   <div className="input-group-custom">
                     <label htmlFor="reg-sexo">Sexo</label>
                     <div className="select-with-icon-wrapper">
-                      <select 
+                      <select
                         id="reg-sexo"
-                        name="sexo" 
-                        value={registerData.sexo} 
-                        onChange={handleRegisterChange} 
+                        name="sexo"
+                        value={registerData.sexo}
+                        onChange={handleRegisterChange}
                         required
                       >
                         <option value="">Seleccionar</option>
@@ -431,9 +442,9 @@ const Auth = ({ initialMode = 'login' }) => {
                   </div>
                 </div>
 
-                <button 
-                  type="submit" 
-                  className="auth-submit-btn" 
+                <button
+                  type="submit"
+                  className="auth-submit-btn"
                   disabled={loading}
                 >
                   {loading ? (

@@ -14,6 +14,7 @@ import {
   Loader2 
 } from 'lucide-react';
 import './Carrito.css';
+import { sileo } from 'sileo';
 
 const Carrito = () => {
   const dispatch = useDispatch();
@@ -38,6 +39,7 @@ const Carrito = () => {
     // 2. Si es ADMIN, no permitir comprar (bloqueo extra de seguridad)
     if (user.role === 'ADMIN') {
       setErrorMsg('Los administradores no pueden realizar compras');
+      sileo.error({ title: 'Error de compra', description: 'Los administradores no pueden realizar compras' });
       return;
     }
 
@@ -71,14 +73,16 @@ const Carrito = () => {
 
       // 5. Éxito: Vaciar carrito en el servidor, mostrar mensaje y redirigir
       dispatch(clearCartServer());
-      setSuccessMsg('¡Compra realizada con éxito! Redirigiendo a tus pedidos...');
+      sileo.success({ title: '¡Compra realizada con éxito!', description: 'Redirigiendo a tus pedidos...' });
       
       setTimeout(() => {
         navigate('/pedidos');
       }, 2000);
 
     } catch (err) {
-      setErrorMsg(err.message || 'Hubo un problema al procesar tu compra. Por favor reintenta.');
+      const msg = err.message || 'Hubo un problema al procesar tu compra. Por favor reintenta.';
+      setErrorMsg(msg);
+      sileo.error({ title: 'Error al procesar compra', description: msg });
     } finally {
       setLoading(false);
     }
@@ -92,7 +96,7 @@ const Carrito = () => {
         <p className="text-muted">Explora nuestro catálogo y agrega excelentes artículos a tu carrito.</p>
         <Link to="/productos" className="btn btn-primary-custom mt-3">
           <ArrowLeft size={16} className="me-2" />
-          Ver Catálogo
+          Ver Productos
         </Link>
       </div>
     );
@@ -126,7 +130,7 @@ const Carrito = () => {
             <div className="table-responsive">
               <table className="cart-table w-100">
                 <thead>
-                  <tr className="text-muted border-bottom pb-2">
+                  <tr className="text-muted">
                     <th>Producto</th>
                     <th className="text-center">Precio</th>
                     <th className="text-center">Cantidad</th>
@@ -136,8 +140,8 @@ const Carrito = () => {
                 </thead>
                 <tbody>
                   {cartItems.map((item) => (
-                    <tr key={item.id} className="border-bottom py-3">
-                      <td className="py-3">
+                    <tr key={item.id}>
+                      <td>
                         <div className="product-cell d-flex align-items-center">
                           {item.imagen && (
                             <img 
@@ -154,10 +158,10 @@ const Carrito = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="text-center py-3">
+                      <td className="text-center">
                         ${Number(item.precio).toLocaleString('es-AR', { minimumFractionDigits: 2 })}
                       </td>
-                      <td className="py-3">
+                      <td>
                         <div className="quantity-control-wrapper d-flex align-items-center justify-content-center">
                           <button 
                             className="quantity-btn btn-sm btn-light border"
@@ -176,13 +180,19 @@ const Carrito = () => {
                           </button>
                         </div>
                       </td>
-                      <td className="text-end fw-bold py-3">
+                      <td className="text-end fw-bold">
                         ${(item.precio * item.cantidad).toLocaleString('es-AR', { minimumFractionDigits: 2 })}
                       </td>
-                      <td className="text-center py-3">
+                      <td className="text-center">
                         <button 
                           className="btn-remove-item text-danger border-0 bg-transparent"
-                          onClick={() => dispatch(removeFromCart(item.id))}
+                          onClick={() => {
+                            dispatch(removeFromCart(item.id));
+                            sileo.info({ 
+                              title: 'Producto eliminado', 
+                              description: `${item.nombre} ya no está en tu carrito.`
+                            });
+                          }}
                           disabled={loading}
                           title="Eliminar del carrito"
                         >
@@ -202,7 +212,13 @@ const Carrito = () => {
               </Link>
               <button 
                 className="btn btn-outline-danger" 
-                onClick={() => dispatch(clearCart())}
+                onClick={() => {
+                  dispatch(clearCart());
+                  sileo.info({ 
+                    title: '¡Carrito vaciado!', 
+                    description: 'Se removieron todos los productos del carrito.'
+                  });
+                }}
                 disabled={loading}
               >
                 Vaciar Carrito

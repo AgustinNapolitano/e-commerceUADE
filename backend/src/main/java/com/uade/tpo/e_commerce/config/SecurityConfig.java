@@ -53,6 +53,11 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/productos/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/productos/**").hasRole("ADMIN")
                 
+                // Acciones de cliente requieren rol USER
+                .requestMatchers("/api/carrito/**").hasRole("USER")
+                .requestMatchers("/api/favoritos/**").hasRole("USER")
+                .requestMatchers(HttpMethod.POST, "/api/pedidos").hasRole("USER")
+                
                 // Cualquier otra petición debe estar autenticada
                 .anyRequest().authenticated()
             )
