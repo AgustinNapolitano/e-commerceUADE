@@ -9,6 +9,7 @@ import AdminPanel from './components/AdminPanel'
 import Carrito from './components/Carrito'
 import Favorite from './components/Favorite'
 import Perfil from './components/Perfil'
+import { Toaster } from 'sileo'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect } from 'react'
@@ -41,6 +42,21 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
+// Componente para proteger rutas exclusivas de clientes (compras y favoritos)
+const ProtectedUserRoute = ({ children }) => {
+  const user = useSelector((state) => state.auth.user);
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user.role !== 'USER') {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
+
 function App() {
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.theme.mode);
@@ -67,56 +83,65 @@ function App() {
 
   return (
     <div className={`app ${theme}`}>
-    
+      <Toaster position="top-center" offset={90} options={{ duration: 3000 }} />
       <NavBar />
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/productos" element={<ProductList />} />
-        <Route path="/productos/:id" element={<ProductDetail />} />
-        <Route path="/categorias" element={<CategoryList />} />
-        
-        <Route
-          path="/pedidos"
-          element={
-            <ProtectedRoute>
-              <Pedido />
-            </ProtectedRoute>
-          }
-        />
-        
-        <Route path="/carrito-redux" element={<Carrito />} />
-        
-        <Route
-          path="/favoritos-redux"
-          element={
-            <ProtectedRoute>
-              <Favorite />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/perfil"
-          element={
-            <ProtectedRoute>
-              <Perfil />
-            </ProtectedRoute>
-          }
-        />
-        
-        <Route path="/login" element={<Auth initialMode="login" />} />
-        <Route path="/registro" element={<Auth initialMode="register" />} />
-
-        <Route
-          path="/admin"
-          element={
-            <ProtectedAdminRoute>
-              <AdminPanel />
-            </ProtectedAdminRoute>
-          }
+      <div className="main-content">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/productos" element={<ProductList />} />
+          <Route path="/productos/:id" element={<ProductDetail />} />
+          <Route path="/categorias" element={<CategoryList />} />
+          
+          <Route
+            path="/pedidos"
+            element={
+              <ProtectedRoute>
+                <Pedido />
+              </ProtectedRoute>
+            }
           />
-       </Routes>
+          
+          <Route
+            path="/carrito"
+            element={
+              <ProtectedUserRoute>
+                <Carrito />
+              </ProtectedUserRoute>
+            }
+          />
+          
+          <Route
+            path="/favoritos"
+            element={
+              <ProtectedUserRoute>
+                <Favorite />
+              </ProtectedUserRoute>
+            }
+          />
+
+          <Route
+            path="/perfil"
+            element={
+              <ProtectedRoute>
+                <Perfil />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route path="/login" element={<Auth initialMode="login" />} />
+          <Route path="/registro" element={<Auth initialMode="register" />} />
+
+          <Route
+            path="/admin"
+            element={
+              <ProtectedAdminRoute>
+                <AdminPanel />
+              </ProtectedAdminRoute>
+            }
+            />
+         </Routes>
+      </div>
     </div>
   )
 }

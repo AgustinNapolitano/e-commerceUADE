@@ -1,21 +1,28 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 :root {
-  --primary-color: #4f46e5;
-  --primary-hover: #4338ca;
-  --secondary-color: #06b6d4;
-  --background-color: #f8fafc;
-  --surface-color: #ffffff;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --border-color: #e2e8f0;
+  --primary-color: #514065; /* Deep purple/violet */
+  --primary-hover: #2D1E3E; /* Dark eggplant purple */
+  --accent-color: #C5BCD2; /* Soft lavender */
+  --secondary-color: #8D829A; /* Slate lavender */
+  --background-color: #f6f5f8; /* Soft lavender-tinted background */
+  --surface-color: rgba(255, 255, 255, 0.85); /* Translucent glass */
+  --text-main: #201729; /* Dark violet text */
+  --text-muted: #726880; /* Muted violet-gray */
+  --border-color: rgba(141, 130, 154, 0.25); /* Muted slate violet border */
   --success-color: #10b981;
   --danger-color: #ef4444;
   --warning-color: #f59e0b;
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
+  --shadow-sm: 0 2px 4px rgba(45, 30, 62, 0.04);
+  --shadow-md: 0 6px 16px rgba(45, 30, 62, 0.06);
+  --shadow-lg: 0 16px 36px rgba(45, 30, 62, 0.1);
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 28px;
+  --sileo-fill: rgba(81, 64, 101, 0.96);
+  --sileo-text: #f3eff6;
 }
 
 body {
@@ -68,13 +75,22 @@ a, button, select, input {
 }
 
 .app.dark {
-  --background-color: #121212;
-  --surface-color: #1f1f1f;
-  --text-main: #f1f1f1;
-  --text-muted: #a0aec0;
-  --border-color: #2d3748;
-  --bs-body-color: #f1f1f1;
-  --bs-secondary-color: #a0aec0;
+  --background-color: #16101d; /* Dark eggplant background */
+  --surface-color: rgba(45, 30, 62, 0.7); /* Eggplant glass surface */
+  --text-main: #f3eff6;
+  --text-muted: #a49ab0;
+  --border-color: rgba(197, 188, 210, 0.15);
+  --primary-color: #C5BCD2; /* Soft lavender as primary active text */
+  --primary-hover: #e0dae8;
+  --secondary-color: #8D829A;
+  --accent-color: #514065;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.4);
+  --bs-body-color: #f3eff6;
+  --bs-secondary-color: #a49ab0;
+  --sileo-fill: rgba(30, 20, 42, 0.96);
+  --sileo-text: #f3eff6;
 
   background-color: var(--background-color);
   color: var(--text-main);
@@ -110,4 +126,67 @@ a, button, select, input {
 
 .theme-toggle-btn:hover {
   background-color: rgba(255, 255, 255, 0.12);
+}
+
+.main-content {
+  padding-top: 115px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Botones Premium Globales */
+.btn-primary-custom {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+  color: white !important;
+  font-weight: 700;
+  border-radius: 30px;
+  border: none;
+  padding: 10px 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 12px rgba(81, 64, 101, 0.15);
+  transition: all 0.25s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-primary-custom:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 16px rgba(81, 64, 101, 0.25);
+  color: white !important;
+}
+
+.btn-primary-custom:active {
+  transform: translateY(0);
+}
+
+.app.dark .btn-primary-custom {
+  color: var(--background-color) !important;
+  box-shadow: 0 4px 12px rgba(197, 188, 210, 0.1);
+}
+
+.app.dark .btn-primary-custom:hover {
+  box-shadow: 0 6px 16px rgba(197, 188, 210, 0.2);
+}
+
+/* ─── Sileo toast: centrar título y descripción ─── */
+[data-sileo-title] {
+  text-align: center !important;
+  width: 100%;
+}
+
+[data-sileo-description] {
+  text-align: center !important;
+}
+
+[data-sileo-header-inner] {
+  justify-content: center !important;
+  width: 100%;
+}
+
+[data-sileo-content] {
+  text-align: center !important;
 }

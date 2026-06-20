@@ -6,6 +6,7 @@ import './ProductList.css';
 import { addToCart } from '../store/slices/cartSlice';
 import { addFavoriteServer, removeFavoriteServer } from '../store/slices/favoritesSlice';
 import { useNavigate } from 'react-router-dom';
+import { sileo } from 'sileo';
 
 const ProductList = () => {
   const location = useLocation();
@@ -192,57 +193,72 @@ const ProductList = () => {
               </Link>
 
               
-                <div className="product-actions">
+                {(!user || user.role === 'USER') && (
+                  <div className="product-actions">
 
-                  <button
-                    onClick={() => {
-                      if (!user) {
-                        navigate('/login');
-                        return;
-                      }
+                    <button
+                      onClick={() => {
+                        if (!user) {
+                          navigate('/login');
+                          return;
+                        }
 
-                      dispatch(addToCart(product));
+                        dispatch(addToCart(product));
+                        sileo.success({ 
+                          title: '¡Agregado al carrito!', 
+                          description: `${product.nombre} se sumó a tus compras.`
+                        });
+                      }}
+                      className="add-cart-button"
+                    >
+                      Agregar al carrito
+                    </button>
 
-                    }}
-                    className="add-cart-button"
-                  >
-                    Agregar al carrito
-                  </button>
+                    {(() => {
+                      const isFav = favoriteItems.some(
+                        f => (f.id ?? f._id ?? f.codigo) === id
+                      );
 
-                  {(() => {
-                    const isFav = favoriteItems.some(
-                      f => (f.id ?? f._id ?? f.codigo) === id
-                    );
+                      return (
+                        <button
+                          onClick={() => {
+                            if (!user) {
+                              navigate('/login');
+                              return;
+                            }
+                            if (isFav) {
+                              dispatch(removeFavoriteServer(id));
+                              sileo.info({ 
+                                title: 'Favorito eliminado', 
+                                description: `${product.nombre} fue quitado de tu lista.`
+                              });
+                            } else {
+                              dispatch(addFavoriteServer(id));
+                              sileo.success({ 
+                                title: '¡Favorito agregado!', 
+                                description: `${product.nombre} se guardó en tu lista.`
+                              });
+                            }
+                          }}
+                          title={isFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+                          style={{
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            padding: '4px',
+                            color: isFav ? '#e53e3e' : '#999',
+                          }}
+                        >
+                          <Heart
+                            size={20}
+                            fill={isFav ? '#e53e3e' : 'none'}
+                          />
+                        </button>
+                      );
+                    })()}
 
-                    return (
-                      <button
-                        onClick={() => {
-                          if (!user) {
-                            navigate('/login');
-                            return;
-                          }
-                          isFav
-                            ? dispatch(removeFavoriteServer(id))
-                            : dispatch(addFavoriteServer(id));
-                        }}
-                        title={isFav ? 'Quitar de favoritos' : 'Agregar a favoritos'}
-                        style={{
-                          background: 'transparent',
-                          border: 'none',
-                          cursor: 'pointer',
-                          padding: '4px',
-                          color: isFav ? '#e53e3e' : '#999',
-                        }}
-                      >
-                        <Heart
-                          size={20}
-                          fill={isFav ? '#e53e3e' : 'none'}
-                        />
-                      </button>
-                    );
-                  })()}
-
-                </div>
+                  </div>
+                )}
             </div>
           );
         })}

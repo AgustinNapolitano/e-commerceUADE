@@ -1,7 +1,8 @@
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
-import { User, LogOut, LogIn, ShoppingCart, Heart } from 'lucide-react';
+import { User, LogOut, LogIn, ShoppingCart, Heart, ChevronDown } from 'lucide-react';
 import './NavBar.css';
 import { toggleTheme } from '../store/slices/themeSlice';
 import { Sun, Moon } from 'lucide-react';
@@ -16,13 +17,41 @@ function Navbar() {
   const favoriteItems = useSelector((state) => state.favorites.favoriteItems);
   const theme = useSelector((state) => state.theme.mode);
 
+  const [prevScrollPos, setPrevScrollPos] = useState(0);
+  const [visible, setVisible] = useState(true);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollPos = window.pageYOffset || document.documentElement.scrollTop;
+
+      // Mostrar si se scrolla para arriba o si se está muy cerca del tope superior
+      setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 80);
+      setPrevScrollPos(currentScrollPos);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [prevScrollPos]);
+
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    const handleOutsideClick = (event) => {
+      if (!event.target.closest('.nav-user-section')) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('click', handleOutsideClick);
+    return () => document.removeEventListener('click', handleOutsideClick);
+  }, [dropdownOpen]);
+
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="navbar">
+    <nav className={`navbar ${visible ? 'navbar-visible' : 'navbar-hidden'}`}>
       <div className="navbar-container">
         <Link to="/" className="navbar-brand">
-          🛒 E-Commerce UADE
+          E-Commerce UADE
         </Link>
 
         <ul className="nav-menu">
@@ -56,7 +85,7 @@ function Navbar() {
 
           {user && user.role === 'USER' && (
             <li>
-              <Link to="/carrito-redux" className={isActive('/carrito-redux') ? 'nav-link active' : 'nav-link'} style={{ display: 'flex', alignItems: 'center' }}>
+              <Link to="/carrito" className={isActive('/carrito') ? 'nav-link active' : 'nav-link'} style={{ display: 'flex', alignItems: 'center' }}>
                 <ShoppingCart size={16} className="me-1" />
                 Carrito
                 {cartCount > 0 && (
@@ -70,7 +99,7 @@ function Navbar() {
 
           {user && user.role === 'USER' && (
             <li>
-              <Link to="/favoritos-redux" className={isActive('/favoritos-redux') ? 'nav-link active' : 'nav-link'} style={{ display: 'flex', alignItems: 'center' }}>
+              <Link to="/favoritos" className={isActive('/favoritos') ? 'nav-link active' : 'nav-link'} style={{ display: 'flex', alignItems: 'center' }}>
                 <Heart size={16} className="me-1" />
                 Favoritos
                 {favoriteItems.length > 0 && (
@@ -100,15 +129,39 @@ function Navbar() {
 
 
           {user ? (
-            <li className="nav-user-section">
-              <Link to="/perfil" className="nav-user-badge" style={{ textDecoration: 'none', cursor: 'pointer' }} title="Ver mi perfil">
-                <User size={16} className="nav-user-icon" />
+            <li className="nav-user-section" style={{ position: 'relative' }}>
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className={`nav-user-badge ${dropdownOpen ? 'active' : ''}`}
+                title="Menú de usuario"
+              >
+                <User size={20} className="nav-user-icon" />
                 <span className="nav-user-greeting">¡Hola, {user.nombre}!</span>
-              </Link>
-              <button onClick={() => dispatch(logout())} className="nav-logout-btn" title="Cerrar Sesión">
-                <LogOut size={16} />
-                <span>Salir</span>
+                <ChevronDown size={14} className={`nav-chevron-icon ${dropdownOpen ? 'rotated' : ''}`} />
               </button>
+
+              {dropdownOpen && (
+                <div className="nav-user-dropdown">
+                  <Link
+                    to="/perfil"
+                    className="dropdown-item"
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    <User size={14} className="me-2" />
+                    Mi Perfil
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setDropdownOpen(false);
+                      dispatch(logout());
+                    }}
+                    className="dropdown-item text-danger"
+                  >
+                    <LogOut size={14} className="me-2" />
+                    Cerrar Sesión
+                  </button>
+                </div>
+              )}
             </li>
           ) : (
             <li>
